@@ -1,0 +1,6 @@
+*.csv
+*.shp
+*.gpkg
+Output/
+__pycache__/
+.DS_Store
