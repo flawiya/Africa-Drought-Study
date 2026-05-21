@@ -4,3 +4,7 @@
 Output/
 __pycache__/
 .DS_Store
+# git status
+# git add .
+# git commit -m "Your commit message"
+# git push origin main
