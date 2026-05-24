@@ -41,20 +41,25 @@ import plotly.express as px
 # ---------------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# GADM agricultural districts shapefile (polygon boundaries for ~3,800 districts)
-GADM_PATH = os.path.join(
-    BASE_DIR, "africa-agricultural-domain-2019", "africa_agricultural_domain_2019.shp"
+# Project root and outputs
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+# Allow overriding the outputs root via env var; default to <project>/outputs
+OUTPUT_ROOT = os.environ.get(
+  "OUTPUT_ROOT", os.path.join(PROJECT_ROOT, "outputs")
 )
+# Create a subfolder named after this script (e.g., outputs/new-file)
+SCRIPT_NAME = os.path.splitext(os.path.basename(__file__))[0]
+OUTPUT_DIR = os.path.join(OUTPUT_ROOT, SCRIPT_NAME)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# GADM agricultural districts shapefile (polygon boundaries for ~3,800 districts)
+GADM_PATH = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\africa_agricultural_domain_2019\africa_agricultural_domain_2019.shp"
 
 # GEOGLAM V1.4 crop calendar shapefile (polygons with planting/harvest DOY per crop)
-GEOGLAM_PATH = os.path.join(
-    BASE_DIR, "GEOGLAM", "GEOGLAM_CM4EW_Calendars_V1.4.shp"
-)
+GEOGLAM_PATH = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\GEOGLAM_CM4EW_Calendars_V1.4\GEOGLAM_CM4EW_Calendars_V1.4.shp"
 
 # ERA5-Land daily soil moisture CSV (one row per district per day, 2000–2026)
-ERA5_PATH = os.path.join(
-    BASE_DIR, "Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv"
-)
+ERA5_PATH = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv"
 
 # SSI threshold: −1.0 = onset of "Moderate Drought" per WMO (2012) / McKee et al. (1993)
 # This corresponds to the ~15.9th percentile (1-in-6-year dryness)
@@ -775,7 +780,7 @@ def generate_animated_map(df_annual, gdf_districts):
     )
 
     # Save
-    output_path = os.path.join(BASE_DIR, "Africa_Maize_GammaSSI_Drought_Map.html")
+    output_path = os.path.join(OUTPUT_DIR, "Africa_Maize_GammaSSI_Drought_Map.html")
     fig.write_html(output_path, include_plotlyjs="cdn")
     file_size_mb = os.path.getsize(output_path) / 1024 / 1024
     print(f"\n  ✅ Map saved: {output_path}")
@@ -833,7 +838,19 @@ def _build_short_group_legend_html(district_to_group):
     return "\n".join(lines)
 
 
-def _build_short_group_colors_js(district_to_group, suffix=""):
+def _build_group_filter_buttons_html(district_to_group):
+    """Build HTML buttons for filtering map by season group."""
+    present_groups = sorted(set(district_to_group.values()))
+    buttons = ['<span class="group-btn active" onclick="filterGroup(\'all\')" style="background:#f8f8f8;">Show All</span>']
+    for g in present_groups:
+        color = GROUP_COLOR_MAP.get(g, "#999999")
+        short = g.replace(" planters", "")
+        buttons.append(
+            f'<span class="group-btn" onclick="filterGroup(\'{g}\')" style="background:{color}22;border-color:{color};">{short}</span>'
+        )
+    return "\n  ".join(buttons)
+
+
     """Build JS object for inter-group map using shortened group keys, with optional hex suffix."""
     present_groups = sorted(set(district_to_group.values()))
     entries = []
@@ -1143,6 +1160,7 @@ def _write_correlation_html(geojson, corr_lookup, ts_data, district_to_group, di
     # Dynamic legend and colors from actual data
     group_legend_html = _build_group_legend_html(district_to_group)
     group_colors_js = _build_group_colors_js(district_to_group)
+    group_filter_html = _build_group_filter_buttons_html(district_to_group)
 
     html = f"""<!DOCTYPE html>
 <html>
@@ -1177,10 +1195,28 @@ def _write_correlation_html(geojson, corr_lookup, ts_data, district_to_group, di
   .ts-chart {{ margin-top:10px; }}
   .ts-bar {{ display:inline-block; width:8px; margin:0 1px; background:#e74c3c;
              vertical-align:bottom; border-radius:2px 2px 0 0; }}
+  .group-filter {{
+    position:absolute; top:10px; left:50%; transform:translateX(-50%); z-index:1000;
+    background:white; padding:10px 16px; border-radius:8px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.15); font-size:12px; text-align:center;
+  }}
+  .group-filter b {{ display:block; margin-bottom:6px; font-size:11px; color:#333; }}
+  .group-btn {{
+    display:inline-block; margin:3px 4px; padding:4px 10px; border-radius:14px;
+    border:1px solid #ccc; cursor:pointer; font-size:11px; font-weight:500;
+    transition: all 0.2s;
+  }}
+  .group-btn:hover {{ box-shadow:0 2px 6px rgba(0,0,0,0.15); }}
+  .group-btn.active {{ border-color:#333; box-shadow:0 0 0 2px rgba(0,0,0,0.15); }}
 </style>
 </head>
 <body>
 <div id="map"></div>
+
+<div class="group-filter">
+  <b>Focus on Season Group</b>
+  {group_filter_html}
+</div>
 
 <div class="info-panel" id="info">
   <h3>🌽 Maize District Drought Correlation</h3>
@@ -1192,14 +1228,14 @@ def _write_correlation_html(geojson, corr_lookup, ts_data, district_to_group, di
 
 <div class="legend">
   <b>Correlation with selected district</b>
-  <div class="legend-item"><div class="legend-color" style="background:#08519c"></div> r ≥ 0.8 (very high)</div>
-  <div class="legend-item"><div class="legend-color" style="background:#3182bd"></div> 0.6 ≤ r < 0.8 (high)</div>
-  <div class="legend-item"><div class="legend-color" style="background:#6baed6"></div> 0.4 ≤ r < 0.6 (moderate)</div>
-  <div class="legend-item"><div class="legend-color" style="background:#bdd7e7"></div> 0.2 ≤ r < 0.4 (low)</div>
-  <div class="legend-item"><div class="legend-color" style="background:#eff3ff"></div> 0 ≤ r < 0.2 (negligible)</div>
-  <div class="legend-item"><div class="legend-color" style="background:#fee0d2"></div> −0.2 ≤ r < 0 (weak inverse)</div>
-  <div class="legend-item"><div class="legend-color" style="background:#fc9272"></div> −0.4 ≤ r < −0.2 (moderate inverse)</div>
-  <div class="legend-item"><div class="legend-color" style="background:#de2d26"></div> r < −0.4 (strong inverse)</div>
+  <div class="legend-item"><div class="legend-color" style="background:#a50f15"></div> r ≥ 0.8 (very high)</div>
+  <div class="legend-item"><div class="legend-color" style="background:#fb6a4a"></div> 0.6 ≤ r < 0.8 (high)</div>
+  <div class="legend-item"><div class="legend-color" style="background:#fcae91"></div> 0.4 ≤ r < 0.6 (moderate)</div>
+  <div class="legend-item"><div class="legend-color" style="background:#fee0d2"></div> 0.2 ≤ r < 0.4 (low)</div>
+  <div class="legend-item"><div class="legend-color" style="background:#f0f0f0"></div> 0 ≤ r < 0.2 (negligible)</div>
+  <div class="legend-item"><div class="legend-color" style="background:#bdd7e7"></div> −0.2 ≤ r < 0 (weak inverse)</div>
+  <div class="legend-item"><div class="legend-color" style="background:#6baed6"></div> −0.4 ≤ r < −0.2 (moderate inverse)</div>
+  <div class="legend-item"><div class="legend-color" style="background:#08306b"></div> r < −0.4 (strong inverse)</div>
   <div style="margin-top:8px;"><b>Season groups (no selection)</b></div>
   {group_legend_html}
 </div>
@@ -1224,21 +1260,21 @@ const districtGroups = {groups_str};
 const districtCountries = {countries_str};
 
 const map = L.map('map').setView([0, 20], 4);
-L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_noclabels/{{z}}/{{x}}/{{y}}@2x.png', {{
+L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}@2x.png', {{
   attribution: '© CARTO'
 }}).addTo(map);
 
 const groupColors = {group_colors_js};
 
 function corrColor(r) {{
-  if (r >= 0.8) return "#08519c";
-  if (r >= 0.6) return "#3182bd";
-  if (r >= 0.4) return "#6baed6";
-  if (r >= 0.2) return "#bdd7e7";
-  if (r >= 0)   return "#eff3ff";
-  if (r >= -0.2) return "#fee0d2";
-  if (r >= -0.4) return "#fc9272";
-  return "#de2d26";
+  if (r >= 0.8) return "#a50f15";
+  if (r >= 0.6) return "#fb6a4a";
+  if (r >= 0.4) return "#fcae91";
+  if (r >= 0.2) return "#fee0d2";
+  if (r >= 0)   return "#f0f0f0";
+  if (r >= -0.2) return "#bdd7e7";
+  if (r >= -0.4) return "#6baed6";
+  return "#08306b";
 }}
 
 function displayName(name) {{
@@ -1324,16 +1360,49 @@ function selectDistrict(name) {{
 // Double-click to reset
 map.on('dblclick', function() {{
   selected = null;
-  geoLayer.eachLayer(l => l.setStyle(defaultStyle(l.feature)));
+  activeGroup = 'all';
+  geoLayer.eachLayer(l => {{
+    l.setStyle(defaultStyle(l.feature));
+    l.getElement() && (l.getElement().style.display = '');
+  }});
   document.getElementById('details').innerHTML = '<p><b>Click a district</b> to see correlations.</p>';
+  document.querySelectorAll('.group-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.group-btn').classList.add('active');
 }});
+
+// Group filter
+let activeGroup = 'all';
+function filterGroup(group) {{
+  activeGroup = group;
+  selected = null;
+  document.querySelectorAll('.group-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  geoLayer.eachLayer(function(layer) {{
+    const grp = layer.feature.properties.season_group || "";
+    const el = layer.getElement();
+    if (!el) return;
+    if (group === 'all') {{
+      el.style.display = '';
+      layer.setStyle(defaultStyle(layer.feature));
+    }} else if (grp === group) {{
+      el.style.display = '';
+      layer.setStyle({{ fillColor: groupColors[grp] || "#d3d3d3", weight: 0.8, color: "#444", fillOpacity: 0.75 }});
+    }} else {{
+      el.style.display = 'none';
+    }}
+  }});
+  document.getElementById('details').innerHTML = group === 'all'
+    ? '<p><b>Click a district</b> to see correlations.</p>'
+    : `<p>Showing <b>${{group}}</b> districts only. Click one to see correlations.</p>`;
+}}
 </script>
 </body>
 </html>"""
 
-    output_path = os.path.join(BASE_DIR, "Africa_Maize_GammaSSI_Correlation_Map.html")
+    output_path = os.path.join(OUTPUT_DIR, "Africa_Maize_GammaSSI_Correlation_Map.html")
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html)
+      f.write(html)
 
     file_size_mb = os.path.getsize(output_path) / 1024 / 1024
     print(f"\n  ✅ Correlation map saved: {output_path}")
@@ -1424,7 +1493,7 @@ def generate_season_group_map(valid_maize, gdf_districts, district_to_group, dis
 const geojson = {geojson_str};
 
 const map = L.map('map').setView([0, 20], 4);
-L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_noclabels/{{z}}/{{x}}/{{y}}@2x.png', {{
+L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}@2x.png', {{
   attribution: '© CARTO'
 }}).addTo(map);
 
@@ -1452,9 +1521,9 @@ L.geoJSON(geojson, {{
 </body>
 </html>"""
 
-    output_path = os.path.join(BASE_DIR, "Africa_Maize_Season_Groups_Map.html")
+    output_path = os.path.join(OUTPUT_DIR, "Africa_Maize_Season_Groups_Map.html")
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html)
+      f.write(html)
 
     file_size_mb = os.path.getsize(output_path) / 1024 / 1024
     print(f"\n  ✅ Season group map saved: {output_path}")
@@ -1637,14 +1706,14 @@ def _write_intergroup_html(geojson, corr_lookup, ts_data, district_to_group, dis
 
 <div class="legend">
   <h4>Pearson Correlation (r)</h4>
-  <div class="legend-item"><div class="legend-color" style="background:#08306b"></div> r ≥ 0.8</div>
-  <div class="legend-item"><div class="legend-color" style="background:#2171b5"></div> 0.6 ≤ r < 0.8</div>
-  <div class="legend-item"><div class="legend-color" style="background:#6baed6"></div> 0.4 ≤ r < 0.6</div>
-  <div class="legend-item"><div class="legend-color" style="background:#bdd7e7"></div> 0.2 ≤ r < 0.4</div>
-  <div class="legend-item"><div class="legend-color" style="background:#f0f0f0"></div> −0.2 < r < 0.2</div>
-  <div class="legend-item"><div class="legend-color" style="background:#fcae91"></div> −0.4 ≤ r < −0.2</div>
-  <div class="legend-item"><div class="legend-color" style="background:#fb6a4a"></div> −0.6 ≤ r < −0.4</div>
-  <div class="legend-item"><div class="legend-color" style="background:#a50f15"></div> r < −0.6</div>
+  <div class="legend-item"><div class="legend-color" style="background:#a50f15"></div> r ≥ 0.8 — Very Strong</div>
+  <div class="legend-item"><div class="legend-color" style="background:#fb6a4a"></div> 0.6 ≤ r < 0.8 — Strong</div>
+  <div class="legend-item"><div class="legend-color" style="background:#fcae91"></div> 0.4 ≤ r < 0.6 — Moderate</div>
+  <div class="legend-item"><div class="legend-color" style="background:#fee0d2"></div> 0.2 ≤ r < 0.4 — Weak</div>
+  <div class="legend-item"><div class="legend-color" style="background:#f0f0f0"></div> −0.2 < r < 0.2 — Negligible</div>
+  <div class="legend-item"><div class="legend-color" style="background:#bdd7e7"></div> −0.4 ≤ r < −0.2 — Weak Inverse</div>
+  <div class="legend-item"><div class="legend-color" style="background:#6baed6"></div> −0.6 ≤ r < −0.4 — Moderate Inverse</div>
+  <div class="legend-item"><div class="legend-color" style="background:#08306b"></div> r < −0.6 — Strong Inverse</div>
 </div>
 
 <div class="references">
@@ -1660,19 +1729,19 @@ const districtGroups = {groups_str};
 const districtCountries = {countries_str};
 
 const map = L.map('map').setView([0, 20], 4);
-L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_noclabels/{{z}}/{{x}}/{{y}}@2x.png', {{
+L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}@2x.png', {{
   attribution: '© CARTO'
 }}).addTo(map);
 
 function corrColor(r) {{
-  if (r >= 0.8) return "#08306b";
-  if (r >= 0.6) return "#2171b5";
-  if (r >= 0.4) return "#6baed6";
-  if (r >= 0.2) return "#bdd7e7";
+  if (r >= 0.8) return "#a50f15";
+  if (r >= 0.6) return "#fb6a4a";
+  if (r >= 0.4) return "#fcae91";
+  if (r >= 0.2) return "#fee0d2";
   if (r > -0.2) return "#f0f0f0";
-  if (r >= -0.4) return "#fcae91";
-  if (r >= -0.6) return "#fb6a4a";
-  return "#a50f15";
+  if (r >= -0.4) return "#bdd7e7";
+  if (r >= -0.6) return "#6baed6";
+  return "#08306b";
 }}
 
 function displayName(name) {{
@@ -1756,7 +1825,7 @@ function selectDistrict(name) {{
   html += `<div style="font-size:10px;color:#888;margin-bottom:8px;">Annual drought days (2000–2025)</div>`;
 
   // Positive correlations
-  html += '<div class="section-title">🔵 Highest Positive Correlations</div>';
+  html += '<div class="section-title">🔴Highest Positive Correlations</div>';
   html += '<table class="corr-table">';
   for (const [d, r] of topPos) {{
     const c = districtCountries[d] || "";
@@ -1769,7 +1838,7 @@ function selectDistrict(name) {{
   html += '</table>';
 
   // Negative correlations
-  html += '<div class="section-title">🔴 Most Negative Correlations</div>';
+  html += '<div class="section-title">🔵 Most Negative Correlations</div>';
   html += '<table class="corr-table">';
   for (const [d, r] of topNeg) {{
     const c = districtCountries[d] || "";
@@ -1803,9 +1872,9 @@ map.on('dblclick', function() {{
 </body>
 </html>"""
 
-    output_path = os.path.join(BASE_DIR, "Africa_Maize_GammaSSI_InterGroup_Correlation_Map.html")
+    output_path = os.path.join(OUTPUT_DIR, "Africa_Maize_GammaSSI_InterGroup_Correlation_Map.html")
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html)
+      f.write(html)
 
     file_size_mb = os.path.getsize(output_path) / 1024 / 1024
     print(f"\n  ✅ Inter-group correlation map saved: {output_path}")
@@ -2004,7 +2073,7 @@ def _write_group_matrix_png(groups, corr_matrix, pval_matrix, group_counts):
 
     plt.tight_layout(rect=[0, 0.05, 1, 0.92])
 
-    output_path = os.path.join(BASE_DIR, "Africa_Maize_GammaSSI_Group_Correlation_Matrix.png")
+    output_path = os.path.join(OUTPUT_DIR, "Africa_Maize_GammaSSI_Group_Correlation_Matrix.png")
     fig.savefig(output_path, dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
@@ -2044,12 +2113,11 @@ def main():
     # Aggregate to annual drought days
     df_annual = aggregate_annual_drought_days(df_filtered)
 
-    # --- COMMENTED OUT: Uncomment to regenerate all HTML maps ---
-    # # Classify severity using published bins
-    # df_annual = bin_drought_days(df_annual)
-    #
-    # # Generate animated map
-    # generate_animated_map(df_annual, gdf_districts)
+    # Classify severity using published bins
+    df_annual = bin_drought_days(df_annual)
+
+    # Generate animated map
+    generate_animated_map(df_annual, gdf_districts)
 
     # Classify season groups ONCE from GEOGLAM data (used by all subsequent maps)
     groups, district_to_group = classify_season_groups(valid_maize)
@@ -2062,19 +2130,17 @@ def main():
     print(f"\n  District-to-country mapping: {len(district_to_country)} districts across "
           f"{len(set(district_to_country.values()))} countries")
 
-    # --- COMMENTED OUT: Uncomment to regenerate other HTML maps ---
-    # # Generate static season-group map
-    # generate_season_group_map(valid_maize, gdf_districts, district_to_group, district_to_country)
-    #
-    # # Compute within-group district correlations and generate map
-    # generate_correlation_map(df_annual, valid_maize, gdf_districts, groups, district_to_group, district_to_country)
+    # Generate static season-group map
+    generate_season_group_map(valid_maize, gdf_districts, district_to_group, district_to_country)
+
+    # Compute within-group district correlations and generate map
+    generate_correlation_map(df_annual, valid_maize, gdf_districts, groups, district_to_group, district_to_country)
 
     # Compute inter-group (continental) correlations and generate map
     generate_intergroup_correlation_map(df_annual, valid_maize, gdf_districts, district_to_group, district_to_country)
 
-    # --- COMMENTED OUT: Uncomment to regenerate PNG matrix ---
-    # # Generate group-level Spearman correlation matrix (PNG)
-    # generate_group_correlation_matrix(df_annual, district_to_group)
+    # Generate group-level Spearman correlation matrix (PNG)
+    generate_group_correlation_matrix(df_annual, district_to_group)
 
     # Final summary
     print("\n" + "=" * 70)
@@ -2083,11 +2149,11 @@ def main():
     print(f"\n  ✅ {df_annual['feature_id'].nunique()} districts processed")
     print(f"  ✅ {len(df_annual):,} district-year records")
     print(f"  ✅ Daily SSI computed via Gamma-CDF (WMO moderate drought threshold: −1.0)")
-    print(f"  ✅ District correlation map: Africa_Maize_GammaSSI_InterGroup_Correlation_Map.html")
-    print(f"\n  ℹ️  Other outputs commented out for speed. Uncomment in main() to regenerate:")
+    print(f"\n  Generated outputs:")
     print(f"     - Africa_Maize_GammaSSI_Drought_Map.html")
     print(f"     - Africa_Maize_Season_Groups_Map.html")
     print(f"     - Africa_Maize_GammaSSI_Correlation_Map.html")
+    print(f"     - Africa_Maize_GammaSSI_InterGroup_Correlation_Map.html")
     print(f"     - Africa_Maize_GammaSSI_Group_Correlation_Matrix.png")
 
     return df_annual

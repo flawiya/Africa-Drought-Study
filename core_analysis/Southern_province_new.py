@@ -195,6 +195,7 @@
 # In[4]:
 
 
+import os
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -210,11 +211,11 @@ import matplotlib.pyplot as plt
 # 1. Load all files
 base_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Zambia\Files"
 
-df_ndvi = pd.read_csv(f"{base_path}\master_southern_province_ndvi.csv")
-df_soil = pd.read_csv(f"{base_path}\master_southern_province_soil-moisture-layer2.csv")
-df_lst = pd.read_csv(f"{base_path}\master_southern_province_lst.csv")
-df_climate = pd.read_csv(f"{base_path}\climate_merged.csv") # Ensure this isn't commented out
-df_spei3 = pd.read_csv(f"{base_path}\master_southern_province_data.csv")
+df_ndvi = pd.read_csv(os.path.join(base_path, "master_southern_province_ndvi.csv"))
+df_soil = pd.read_csv(os.path.join(base_path, "master_southern_province_soil-moisture-layer2.csv"))
+df_lst = pd.read_csv(os.path.join(base_path, "master_southern_province_lst.csv"))
+df_climate = pd.read_csv(os.path.join(base_path, "climate_merged.csv")) # Ensure this isn't commented out
+df_spei3 = pd.read_csv(os.path.join(base_path, "master_southern_province_data.csv"))
 
 
 # In[6]:
@@ -245,11 +246,11 @@ df_spei3.head()
 
 
 # 1. Load all your dataframes
-df_ndvi = pd.read_csv(f"{base_path}\master_southern_province_ndvi.csv")
-df_soil = pd.read_csv(f"{base_path}\master_southern_province_soil-moisture-layer2.csv")
-df_lst = pd.read_csv(f"{base_path}\master_southern_province_lst.csv")
-df_climate = pd.read_csv(f"{base_path}\climate_merged.csv")
-df_spei3 = pd.read_csv(f"{base_path}\master_southern_province_data.csv") # The one with PET/Precip
+df_ndvi = pd.read_csv(os.path.join(base_path, "master_southern_province_ndvi.csv"))
+df_soil = pd.read_csv(os.path.join(base_path, "master_southern_province_soil-moisture-layer2.csv"))
+df_lst = pd.read_csv(os.path.join(base_path, "master_southern_province_lst.csv"))
+df_climate = pd.read_csv(os.path.join(base_path, "climate_merged.csv"))
+df_spei3 = pd.read_csv(os.path.join(base_path, "master_southern_province_data.csv")) # The one with PET/Precip
 
 # 2. Sequential "Safe Merge" 
 # We merge them one by one. If a file has 'district', we merge by district. 
@@ -280,7 +281,7 @@ if 'soil_moisture_layer2' in master_final.columns:
     master_final = master_final.rename(columns={'soil_moisture_layer2': 'soil_moisture_7_28'})
 
 # 4. Save
-output_path = f"{base_path}\southern_province_unified_raw.csv"
+output_path = os.path.join(base_path, "southern_province_unified_raw.csv")
 master_final.to_csv(output_path, index=False)
 
 print("Merge Successful!")
