@@ -105,4 +105,4 @@ for i in range(K):
         sig = "***" if p < 0.001 else ("**" if p < 0.01 else ("*" if p < 0.05 else "ns"))
         note = "[SYSTEMIC]" if abs(rho) > 0.7 else "[DIVERSIFY]" if abs(rho) < 0.3 else "[MODERATE]"
         print(f"  G{i+1} vs G{j+1}: ρ={rho:+.3f} {sig} {note}")
-print(f"\n✅ Done — outputs in: {OUT}")
+print(f"\n Done — outputs in: {OUT}")
