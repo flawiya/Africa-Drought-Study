@@ -20,7 +20,7 @@ Strengths
 - Understandable — λ slider is intuitive
 - Documents well — Ware et al. (2022) uses this exact PCA+K-Means approach for climate regionalization
 Weaknesses
-- No spatial contiguity — A district in Nigeria and one in South Africa can be in the same cluster if their drought patterns match exactly. This is what Massimo complained about ("districts in Mexico and India").
+- No spatial contiguity — A district in Nigeria and one in South Africa can be in the same cluster if their drought patterns match exactly.
 - Spherical bias — K-Means assumes clusters are spherical. Real drought regions can be elongated or irregular.
 - K must be chosen manually
 Script 2: spatial_agglomerative_clustering.py — AZP-Style Spatial Clustering
@@ -67,10 +67,10 @@ Weaknesses
 Comparison Table
 Aspect	Script 1 (K-Means)	Script 2 (Agglomerative + Spatial)
 Core algorithm	Partition-based	Hierarchical (bottom-up merge)
-Spatial contiguity	❌ Not enforced	✅ Guaranteed via k-NN constraint
+Spatial contiguity Not enforced	Guaranteed via k-NN constraint
 K selection	Manual	Auto (Silhouette) or manual
 Cluster shape	Spherical only	Arbitrary shapes
 Speed	Fast (seconds)	Moderate (10-20 seconds)
 Feature fusion	λ-weighted concatenation	Same approach
 Citation	Ware et al. (2022)	Duque, Anselin & Rey (2012); Guo (2008)
-What Massimo sees	"Why is Group 4 scattered?"	"These zones look like real geographic regions"
+"Why is Group 4 scattered?"	"These zones look like real geographic regions"
