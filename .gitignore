@@ -3,6 +3,8 @@
 *.gpkg
 Output/
 outputs/
+experiments/
+data/
 __pycache__/
 .DS_Store
 # git status

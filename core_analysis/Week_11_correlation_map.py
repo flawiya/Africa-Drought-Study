@@ -44,6 +44,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Project root and outputs
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 # Allow overriding the outputs root via env var; default to <project>/outputs
+DATA_DIR = os.path.join(PROJECT_ROOT, "data")
+
 OUTPUT_ROOT = os.environ.get(
   "OUTPUT_ROOT", os.path.join(PROJECT_ROOT, "outputs")
 )
@@ -53,13 +55,13 @@ OUTPUT_DIR = os.path.join(OUTPUT_ROOT, SCRIPT_NAME)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # GADM agricultural districts shapefile (polygon boundaries for ~3,800 districts)
-GADM_PATH = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\africa_agricultural_domain_2019\africa_agricultural_domain_2019.shp"
+GADM_PATH = os.path.join(DATA_DIR, "africa-agricultural-domain-2019", "africa_agricultural_domain_2019.shp")
 
 # GEOGLAM V1.4 crop calendar shapefile (polygons with planting/harvest DOY per crop)
-GEOGLAM_PATH = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\GEOGLAM_CM4EW_Calendars_V1.4\GEOGLAM_CM4EW_Calendars_V1.4.shp"
+GEOGLAM_PATH = os.path.join(DATA_DIR, "GEOGLAM", "GEOGLAM_CM4EW_Calendars_V1.4.shp")
 
 # ERA5-Land daily soil moisture CSV (one row per district per day, 2000–2026)
-ERA5_PATH = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv"
+ERA5_PATH = os.path.join(DATA_DIR, "Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv")
 
 # SSI threshold: −1.0 = onset of "Moderate Drought" per WMO (2012) / McKee et al. (1993)
 # This corresponds to the ~15.9th percentile (1-in-6-year dryness)
@@ -297,9 +299,13 @@ def load_and_merge_era5(valid_maize):
     print("STEP 5: Loading ERA5 soil moisture & merging with risk windows")
     print("=" * 70)
 
-    # Load ERA5 CSV
+    # Load ERA5 CSV (with memory-optimized dtypes)
     print(f"\n  Loading ERA5 from:\n    {ERA5_PATH}")
-    df_era5 = pd.read_csv(ERA5_PATH)
+    dtype = {
+        "year": "int16", "month": "int8", "day": "int8", "doy": "int16",
+        "volumetric_soil_water_layer_2": "float32",
+    }
+    df_era5 = pd.read_csv(ERA5_PATH, dtype=dtype)
     df_era5["feature_id"] = df_era5["feature_id"].astype(str).str.strip().str.upper()
     print(f"  → {len(df_era5):,} rows, {df_era5['feature_id'].nunique()} districts")
     print(f"  → Year range: {df_era5['year'].min()}–{df_era5['year'].max()}")
@@ -781,6 +787,7 @@ def generate_animated_map(df_annual, gdf_districts):
 
     # Save
     output_path = os.path.join(OUTPUT_DIR, "Africa_Maize_GammaSSI_Drought_Map.html")
+    print(f"  Writing HTML (this may take several minutes for {len(final_gdf):,} rows) …", flush=True)
     fig.write_html(output_path, include_plotlyjs="cdn")
     file_size_mb = os.path.getsize(output_path) / 1024 / 1024
     print(f"\n  ✅ Map saved: {output_path}")
@@ -2113,6 +2120,9 @@ def main():
     # Aggregate to annual drought days
     df_annual = aggregate_annual_drought_days(df_filtered)
 
+    df_annual.to_csv(os.path.join(OUTPUT_DIR, "drought_annual.csv"), index=False)
+    valid_maize.to_file(os.path.join(OUTPUT_DIR, "valid_maize.geojson"), driver="GeoJSON")
+    
     # Classify severity using published bins
     df_annual = bin_drought_days(df_annual)
 

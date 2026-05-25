@@ -1,0 +1,76 @@
+Script 1: clustering_experiment.py — Weighted K-Means
+What It Does
+Takes 2016 African maize districts, each with a 25-year drought history (26 numbers per district) and their geographic coordinates (x, y), then groups them into K clusters using K-Means.
+The Feature Matrix (What K-Means Actually Sees)
+Each district is represented as a 28-dimensional vector:
+District X = [drought_2000, drought_2001, ..., drought_2025,  (× 26, scaled)
+              centroid_x,     centroid_y]                      (× 2,  scaled)
+The λ slider controls how these two halves combine:
+- λ = 0: weather * 1.0 + geo * 0.0 → Only the 26 drought years matter. Geography is ignored. Districts with similar drought patterns cluster together even if they're on opposite sides of Africa.
+- λ = 0.5: weather * 0.5 + geo * 0.5 → Both matter equally. K-Means looks for districts that have similar drought histories AND are somewhat close.
+- λ = 1.0: weather * 0.0 + geo * 1.0 → Only geography matters. K-Means effectively draws circles on a map.
+What K-Means Does
+K-Means places K "centroids" randomly in this 28-dimensional space, then iteratively:
+1. Assigns each district to the nearest centroid
+2. Moves each centroid to the mean of its assigned districts
+3. Repeats until stable
+Result: Districts are grouped by the weighted combination of weather similarity + geographic proximity.
+Strengths
+- Fast — O(N × K × iterations), runs in seconds for 2000 districts
+- Understandable — λ slider is intuitive
+- Documents well — Ware et al. (2022) uses this exact PCA+K-Means approach for climate regionalization
+Weaknesses
+- No spatial contiguity — A district in Nigeria and one in South Africa can be in the same cluster if their drought patterns match exactly. This is what Massimo complained about ("districts in Mexico and India").
+- Spherical bias — K-Means assumes clusters are spherical. Real drought regions can be elongated or irregular.
+- K must be chosen manually
+Script 2: spatial_agglomerative_clustering.py — AZP-Style Spatial Clustering
+What It Does
+Same input (2016 districts, 26-year drought history, coordinates). But instead of K-Means, it uses hierarchical agglomerative clustering with a spatial contiguity constraint.
+The Critical Difference: The Connectivity Matrix
+Before clustering, a k-NN graph is built from district centroids:
+For each district:
+  - Find its 10 nearest geographic neighbors
+  - Draw an edge between them
+This graph defines which districts are allowed to merge during clustering. Two districts can only be in the same cluster if there's a path of neighboring districts connecting them.
+How the Algorithm Works
+Instead of starting with random centroids, Agglomerative Clustering works bottom-up:
+1. Start: Every district is its own cluster (2016 clusters)
+2. Merge: Find the two most similar clusters that are connected via the k-NN graph and merge them
+3. Repeat: Continue merging until K clusters remain
+"Most similar" = smallest Ward distance: the increase in total within-cluster variance if we merge them.
+The Spatial Constraint in Action
+Imagine three districts:
+- A (North Nigeria, high drought)
+- B (South Nigeria, moderate drought)  
+- C (South Africa, high drought)
+With K-Means (λ=0.5): A and C might cluster together (both high drought, both in West/South Africa) while B goes elsewhere.
+With Agglomerative + spatial constraint: A and C can NEVER be in the same cluster because there is no chain of neighboring districts connecting Nigeria to South Africa (they're separated by other countries). A will cluster with its Nigerian neighbors B and others.
+Auto-Detection of K
+The script tries K = 2 through 15. For each K:
+1. Cluster with spatial constraint
+2. Compute Silhouette Score: measures how well each district fits its own cluster vs. the nearest neighboring cluster
+3. Pick the K with the highest Silhouette Score
+Silhouette ranges from -1 to +1:
+Score	Meaning
+> 0.7	Strong structure — districts clearly belong to their zone
+0.3 - 0.7	Reasonable structure
+< 0.2	No real cluster structure — all zones are similar
+Strengths
+- Spatial contiguity guaranteed — No scattered districts. Every cluster is a connected geographic region.
+- Arbitrary shapes — Can produce elongated or irregular cluster shapes (drought regions follow climate patterns, not circles).
+- Auto K detection — No manual guessing.
+- Academic gold standard — Duque, Anselin & Rey (2012) max-p regions; Guo (2008) REDCAP. This is what Massimo asked for when he said "Spatially Constrained Agglomerative Clustering."
+Weaknesses
+- Slightly slower — O(N²) vs O(N) for K-Means (still fast for 2000 districts)
+- k-NN is an approximation — True contiguity requires polygon intersection checks, but k-NN with 10 neighbors is a good practical substitute
+- Less intuitive — No simple λ slider mental model (though I kept it for consistency)
+Comparison Table
+Aspect	Script 1 (K-Means)	Script 2 (Agglomerative + Spatial)
+Core algorithm	Partition-based	Hierarchical (bottom-up merge)
+Spatial contiguity	❌ Not enforced	✅ Guaranteed via k-NN constraint
+K selection	Manual	Auto (Silhouette) or manual
+Cluster shape	Spherical only	Arbitrary shapes
+Speed	Fast (seconds)	Moderate (10-20 seconds)
+Feature fusion	λ-weighted concatenation	Same approach
+Citation	Ware et al. (2022)	Duque, Anselin & Rey (2012); Guo (2008)
+What Massimo sees	"Why is Group 4 scattered?"	"These zones look like real geographic regions"
