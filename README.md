@@ -1,4 +1,6 @@
 # African Agricultural Drought Study: SSI-Based Parametric Triggers
+Project focus: SSI Triggers, Satellite Data, Parametric Insurance.
+
 ![alt text](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![alt text](https://img.shields.io/badge/Google%20Earth%20Engine-4285F4?style=for-the-badge&logo=google-earth&logoColor=white) ![alt text](https://img.shields.io/badge/ERA5--Land-ECMWF-blue?style=for-the-badge) ![alt text](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white) ![alt text](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=white) ![alt text](https://img.shields.io/badge/Geopandas-44A833?style=for-the-badge&logo=pandas&logoColor=white)
 
 ## 🌍 Project Overview
