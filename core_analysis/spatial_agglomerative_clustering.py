@@ -16,15 +16,18 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import kneighbors_graph
 from sklearn.metrics import silhouette_score
-from scipy.stats import spearmanr
+from scipy.stats import spearmanr, pearsonr
 import plotly.express as px
+
+import warnings
+warnings.filterwarnings("ignore")
 # =============================================================
-# CONFIG — edit these before pressing F9
+# CONFIG 
 # =============================================================
 K = 0                          # 0 = auto-detect via silhouette, or set to fixed number
-K_MAX = 15                     # max K to evaluate when auto-detecting
+K_MAX = 7                     # max K to evaluate when auto-detecting
 SPATIAL_NEIGHBORS = 10          # k for k-NN spatial contiguity graph
-LAMBDA = 0.5                   # 0=pure weather, 1=pure geography
+LAMBDA = 0.3                   # 0=pure weather, 1=pure geography
 OUTPUT_DIR = "experiments"
 # =============================================================
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -33,7 +36,7 @@ OUT = os.path.join(PROJ, OUTPUT_DIR)
 os.makedirs(OUT, exist_ok=True)
 # --- Load data ---
 df_annual = pd.read_csv(os.path.join(PROJ, "outputs", "Week_11_correlation_map", "drought_annual.csv"))
-gdf = gpd.read_file(os.path.join(PROJ, "data", "africa-agricultural-domain-2019", "africa_agricultural_domain_2019.shp"))
+gdf = gpd.read_file(os.path.join(PROJ, "data", "africa_agricultural_domain_2019", "africa_agricultural_domain_2019.shp"))
 pivot = df_annual.pivot_table(index="feature_id", columns="year", values="Drought_Days").fillna(0)
 gdf["ADM_NAME"] = gdf["ADM_NAME"].astype(str).str.strip().str.upper()
 gdf = gdf.drop_duplicates(subset="ADM_NAME")
@@ -101,8 +104,37 @@ print("INTER-GROUP CORRELATION (Spearman ρ)")
 print(f"{'='*60}")
 for i in range(K):
     for j in range(i + 1, K):
-        rho, p = spearmanr(pivot_g[i], pivot_g[j])
-        sig = "***" if p < 0.001 else ("**" if p < 0.01 else ("*" if p < 0.05 else "ns"))
+        rho, p_sp = spearmanr(pivot_g[i], pivot_g[j])
+        r_pearson, p_pe = pearsonr(pivot_g[i], pivot_g[j])
+        sig_s = "***" if p_sp < 0.001 else ("**" if p_sp < 0.01 else ("*" if p_sp < 0.05 else "ns"))
+        sig_p = "***" if p_pe < 0.001 else ("**" if p_pe < 0.01 else ("*" if p_pe < 0.05 else "ns"))
         note = "[SYSTEMIC]" if abs(rho) > 0.7 else "[DIVERSIFY]" if abs(rho) < 0.3 else "[MODERATE]"
-        print(f"  G{i+1} vs G{j+1}: ρ={rho:+.3f} {sig} {note}")
-print(f"\n Done — outputs in: {OUT}")
+        print(f"  G{i+1} vs G{j+1}: Spearman ρ={rho:+.3f} {sig_s} | Pearson r ={r_pearson:.3f} {sig_p} {note}")
+
+# --- Pearson correlation HTML table ---
+import plotly.graph_objects as go
+corr_data = []
+for i in range(K):
+    row = []
+    for j in range(K):
+        if i == j:
+            row.append(1.0)
+        else:
+            a, b = (pivot_g[i], pivot_g[j]) if i < j else (pivot_g[j], pivot_g[i])
+            r, p = pearsonr(a, b)
+            row.append(r)
+    corr_data.append(row)
+fig_corr = go.Figure(data=go.Heatmap(
+    z=corr_data,
+    x=[f"G{c+1}" for c in range(K)],
+    y=[f"G{c+1}" for c in range(K)],
+    text=[[f"{v:+.3f}" for v in row] for row in corr_data],
+    texttemplate="%{text}",
+    colorscale="RdBu_r",
+    zmin=-1, zmax=1,
+))
+fig_corr.update_layout(title=f"Inter-Cluster Pearson Correlation (λ={LAMBDA})")
+fig_corr.write_html(os.path.join(OUT, f"pearson_matrix_k{K}_l{str(LAMBDA).replace('.','')}.html"))
+
+print(f"\nDone — outputs in: {OUT}")
+

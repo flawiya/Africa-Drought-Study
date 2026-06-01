@@ -43,8 +43,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Project root and outputs
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
-# Allow overriding the outputs root via env var; default to <project>/outputs
-DATA_DIR = os.path.join(PROJECT_ROOT, "data")
+
+# Project data root can be overridden for detached datasets
+DATA_DIR = os.environ.get("DATA_DIR", os.path.join(PROJECT_ROOT, "data"))
 
 OUTPUT_ROOT = os.environ.get(
   "OUTPUT_ROOT", os.path.join(PROJECT_ROOT, "outputs")
@@ -62,6 +63,26 @@ GEOGLAM_PATH = os.path.join(DATA_DIR, "GEOGLAM", "GEOGLAM_CM4EW_Calendars_V1.4.s
 
 # ERA5-Land daily soil moisture CSV (one row per district per day, 2000–2026)
 ERA5_PATH = os.path.join(DATA_DIR, "Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv")
+
+
+def require_input_path(path, description):
+    if os.path.exists(path):
+        return path
+
+    basename = os.path.basename(path)
+    print(f"  {description} not found at expected path; searching {DATA_DIR} for {basename}...")
+
+    for root, _, files in os.walk(DATA_DIR):
+        if basename in files:
+            found_path = os.path.join(root, basename)
+            print(f"  Found {description} at: {found_path}")
+            return found_path
+
+    raise FileNotFoundError(
+        f"{description} not found:\n  {path}\n"
+        "If the file lives elsewhere, set the DATA_DIR environment variable "
+        "to the directory containing the required dataset and rerun."
+    )
 
 # SSI threshold: −1.0 = onset of "Moderate Drought" per WMO (2012) / McKee et al. (1993)
 # This corresponds to the ~15.9th percentile (1-in-6-year dryness)
@@ -87,8 +108,10 @@ def load_shapefiles():
     print("=" * 70)
 
     # Load GADM districts
+    print(f"\n  Data root: {DATA_DIR}")
     print(f"\n  Loading GADM districts from:\n    {GADM_PATH}")
-    gdf_districts = gpd.read_file(GADM_PATH)
+    resolved_gadm = require_input_path(GADM_PATH, "GADM agricultural districts shapefile")
+    gdf_districts = gpd.read_file(resolved_gadm)
 
     # Standardise district names to uppercase (for consistent matching later)
     gdf_districts["ADM_NAME"] = (
@@ -100,7 +123,8 @@ def load_shapefiles():
 
     # Load GEOGLAM crop calendar
     print(f"\n  Loading GEOGLAM V1.4 from:\n    {GEOGLAM_PATH}")
-    gdf_geoglam = gpd.read_file(GEOGLAM_PATH)
+    resolved_geoglam = require_input_path(GEOGLAM_PATH, "GEOGLAM crop calendar shapefile")
+    gdf_geoglam = gpd.read_file(resolved_geoglam)
     print(f"  → {len(gdf_geoglam)} calendar polygons loaded")
     print(f"  → CRS: {gdf_geoglam.crs}")
     print(f"  → Crops available: {sorted(gdf_geoglam['crop'].unique())}")
@@ -301,11 +325,12 @@ def load_and_merge_era5(valid_maize):
 
     # Load ERA5 CSV (with memory-optimized dtypes)
     print(f"\n  Loading ERA5 from:\n    {ERA5_PATH}")
+    resolved_era5 = require_input_path(ERA5_PATH, "ERA5 soil moisture CSV")
     dtype = {
         "year": "int16", "month": "int8", "day": "int8", "doy": "int16",
         "volumetric_soil_water_layer_2": "float32",
     }
-    df_era5 = pd.read_csv(ERA5_PATH, dtype=dtype)
+    df_era5 = pd.read_csv(resolved_era5, dtype=dtype)
     df_era5["feature_id"] = df_era5["feature_id"].astype(str).str.strip().str.upper()
     print(f"  → {len(df_era5):,} rows, {df_era5['feature_id'].nunique()} districts")
     print(f"  → Year range: {df_era5['year'].min()}–{df_era5['year'].max()}")
