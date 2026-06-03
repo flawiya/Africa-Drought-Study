@@ -38,7 +38,7 @@ warnings.filterwarnings('ignore')
 # In[3]:
 
 
-master_df=pd.read_csv(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\output\master_df.csv")
+master_df=pd.read_csv("C:\\Users\\FlawiyaShirishMore\\Downloads\\Africa-Drought-Study\\data\\master_df.csv")
 
 
 # In[4]:
@@ -60,7 +60,7 @@ plt.ylabel("Average Precipitation (mm)", fontsize=12)
 #plt.title("Average Monthly Rainfall Across Ethiopian Districts", fontsize=14, fontweight='bold', pad=20)
 plt.figtext(0.5, 0.009, "Figure 1: Average Monthly Rainfall Across Ethiopian Districts",
             ha='center', fontsize=10, style='italic', wrap=True)
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Ethiopia_Monthly_Rainfall_Climatology.png", 
+plt.savefig("../outputs/Ethiopia_Monthly_Rainfall_Climatology.png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.tight_layout()
 plt.show()
@@ -123,10 +123,10 @@ master_df['SPI_3'] = master_df.groupby(['ADM_NAME', 'month'])['precip_3m'].trans
 # In[10]:
 
 
-# -1.5 standard threshold for Severe Drought
-trigger_threshold = -1.5 # https://climatedataguide.ucar.edu/climate-data/standardized-precipitation-index-spi
+# -1.0 standard threshold for Severe Drought
+trigger_threshold = -1.0 # https://climatedataguide.ucar.edu/climate-data/standardized-precipitation-index-spi
 master_df['is_drought_trigger'] = master_df['SPI_3'] <= trigger_threshold
-master_df.to_csv(os.path.join(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\output\district_spi_results.csv"), 
+master_df.to_csv("../data/district_spi_results.csv", 
           index=False)
 
 
@@ -134,7 +134,7 @@ master_df.to_csv(os.path.join(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Sp
 
 
 # Load your completed dataset
-district_spi_df = pd.read_csv(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\output\district_spi_results.csv")
+district_spi_df = pd.read_csv("../data/district_spi_results.csv")
 # Critical agricultural month (September - end of Kiremt rains)
 critical_month = 9
 heatmap_data = master_df[master_df['month'] == critical_month].pivot(index='year', columns='ADM_NAME', values='SPI_3')
@@ -158,7 +158,7 @@ plt.axhline(y=heatmap_data.index.get_loc(2009), color='darkorange', linewidth=3,
 plt.axhline(y=heatmap_data.index.get_loc(2015), color='black', linewidth=3, linestyle='--', label="2015 La Niña failed Belg")
 plt.legend()
 plt.tight_layout()
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Ethiopia_Historical_Temporal_Drought_Matrix_September.png", 
+plt.savefig("../outputs/Ethiopia_Historical_Temporal_Drought_Matrix_September.png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.show()
 
@@ -237,7 +237,7 @@ def plot_water_balance_scissors(district_name):
     plt.figtext(0.5, 0.002, "Figure 3: Climatic_Water_Balance(Agew_Awi)",
             ha='center', fontsize=10, style='italic', wrap=True)
     filename = f"Climatic_Water_Balance_{district_name.replace(' ', '_')}.png"
-    plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\output\Climatic_Water_Balance(Agew_Awi)", 
+    plt.savefig(f"../outputs/{filename}", 
                 dpi=300, bbox_inches='tight', facecolor='white')
     plt.show()
 first_district = master_df['ADM_NAME'].iloc[0]
@@ -261,7 +261,7 @@ sns.heatmap(corr_matrix, annot=True, cmap='RdYlGn', center=0)
 #plt.title("Inter-Variable Correlation (Validating Thermal & Vegetation Links)")
 plt.figtext(0.5, 0.002, "Figure 4: Inter-Variable Correlation (Validating Thermal & Vegetation Links)",
             ha='center', fontsize=10, style='italic', wrap=True)
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Inter_Variable_Correlation_(Validating_Thermal_&_Vegetation_Links).png", 
+plt.savefig("../outputs/Inter_Variable_Correlation_(Validating_Thermal_&_Vegetation_Links).png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.show()
 
@@ -324,7 +324,7 @@ new_corr, _ = pearsonr(valid_indices['spei_final'], valid_indices['SSI_3'])
 # In[25]:
 
 
-master_df['met_alert'] = master_df['spei_final'] <= -1.5
+master_df['met_alert'] = master_df['spei_final'] <= -1.0
 master_df['agri_confirm'] = master_df['ndvi_z'] <= -1.0
 master_df['insurance_payout'] = np.where(
     (master_df['met_alert']) & (master_df['agri_confirm']), 1, 0)
@@ -349,7 +349,7 @@ plt.title("SSI-3 Soil Moisture Drought (September Harvest)")
 plt.ylabel("Year")
 #plt.figtext(0.5, 0.002, "Figure 5: SSI-3 Soil Moisture Drought (September Harvest)", 
             #ha='center', style='italic')
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Ethiopia_SSI_Heatmap_September.png", dpi=300)
+plt.savefig("../outputs/Ethiopia_SSI_Heatmap_September.png", dpi=300)
 
 
 # In[27]:
@@ -369,7 +369,7 @@ plt.fill_between(subset.date, subset['SSI_3'], subset['spei_final'],
 plt.legend()
 plt.title(f"Soil vs Atmospheric Drought: {district}")
 #plt.figtext(0.5, 0.01, "Figure Y: SSI-3 vs SPEI-3 - Soil lags atmosphere by 1-2 months", ha='center', style='italic')
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\SSI-3_vs_SPEI-3_Soil_lags_atmosphere.png", dpi=300)
+plt.savefig("../outputs/SSI-3_vs_SPEI-3_Soil_lags_atmosphere.png", dpi=300)
 
 
 # ### Index 4: Satellite Indices (VCI, TCI, VHI)
@@ -415,7 +415,7 @@ master_df['VHI'] = 0.5 * master_df['VCI'] + 0.5 * master_df['TCI']
 
 # Integrated Agricultural Drought Index (IADI) (https://www.researchgate.net/publication/372367160_A_novel_comprehensive_agricultural_drought_index_accounting_for_precipitation_evapotranspiration_and_soil_moisture)
 master_df['IADI'] = (master_df['spei_final'] * 0.4) + (master_df['SSI_3'] * 0.6)
-master_df['INSURANCE_PAYOUT'] = master_df['IADI'] <= -1.5
+master_df['INSURANCE_PAYOUT'] = master_df['IADI'] <= -1.0
 comp_corr, _ = pearsonr(master_df['IADI'].dropna(), master_df['ndvi'].dropna())
 print(f"Integrated Agricultural Drought Index correlation with NDVI: {comp_corr:.3f}")
 
@@ -464,7 +464,7 @@ print(f"✅ IASI calculated")
 print(f"IASI vs NDVI correlation: {final_v_corr:.3f} (p={p_value:.3f})")
 
 # 5. SAVE RESULTS
-master_df.to_csv(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\master_df_with_IASI.csv", index=False)
+master_df.to_csv("../data/master_df_with_IASI.csv", index=False)
 print("✅ Saved master_df_with_IASI.csv")
 
 # 6. QUICK VALIDATION PLOT
@@ -475,7 +475,7 @@ plt.xlabel('IASI (Integrated Agricultural Stress)')
 plt.ylabel('NDVI (Vegetation Health)')
 plt.title(f'IASI vs NDVI (r={final_v_corr:.3f})')
 plt.grid(True, alpha=0.3)
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\IASI_NDVI_validation.png", dpi=300)
+plt.savefig("../outputs/IASI_NDVI_validation.png", dpi=300)
 plt.show()
 
 
@@ -565,7 +565,7 @@ print(disaster_summary)
 
 # 8. SAVE FINAL DATASET
 master_df.to_csv(
-    r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\master_df_final_drought_events.csv",
+    "../data/master_df_final_drought_events.csv",
     index=False
 )
 print("\n✅ Saved master_df_final_drought_events.csv")
@@ -601,7 +601,7 @@ plt.xlabel('False Positive Rate (Incorrect Alarms)', fontsize=12)
 plt.ylabel('True Positive Rate (Correct Payouts)', fontsize=12)
 plt.legend(loc="lower right", fontsize=10)
 plt.grid(alpha=0.3)
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Consolidated_ROC_Analysis.png", 
+plt.savefig("../outputs/Consolidated_ROC_Analysis.png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.show()
 
@@ -629,10 +629,10 @@ plt.show()
 # In[35]:
 
 
-gadm_file_path = r"C:\\Users\\FlawiyaShirishMore\\OneDrive - Africa Specialty Risks Ltd\\ASR-Parametric_Research_Study\\africa_risk\\Drought\\data\\gadm_410-levels\\gadm_410-levels.gpkg"
+gadm_file_path = "../data/gadm_410-levels/gadm_410-levels.gpkg"
 gadm_data = gpd.read_file(gadm_file_path, layer='ADM_2')
 ethiopia_districts = gadm_data[gadm_data['COUNTRY'] == 'Ethiopia'] 
-ethiopia_districts.to_file(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia_districts.shp")
+ethiopia_districts.to_file("../data/ethiopia_districts.shp")
 
 
 # In[37]:
@@ -648,12 +648,12 @@ from pathlib import Path
 print("Loading districts and merging with master_df...")
 
 # Load Ethiopia districts
-gadm_file = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\gadm_410-levels\gadm_410-levels.gpkg"
+gadm_file = "../data/gadm_410-levels/gadm_410-levels.gpkg"
 districts_gdf = gpd.read_file(gadm_file, layer='ADM_2')
 districts_gdf = districts_gdf[districts_gdf['COUNTRY'] == 'Ethiopia'].copy()
 
 # Load master_df (your processed data)
-master_df = pd.read_csv(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\master_df_final_drought_events.csv")
+master_df = pd.read_csv("../data/master_df_final_drought_events.csv")
 
 # MERGE: districts + drought indices
 merged_gdf = districts_gdf.merge(
@@ -748,7 +748,7 @@ def create_multi_layer_drought_map(merged_gdf, year=2015, month=10):
     return m
 
 # 3. **RUN** the function
-output_base = Path(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output")
+output_base = Path("../outputs")
 m = create_multi_layer_drought_map(merged_gdf, year=2015, month=10)
 
 # Display in Jupyter

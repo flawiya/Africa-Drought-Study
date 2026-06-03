@@ -209,7 +209,7 @@ import matplotlib.pyplot as plt
 
 
 # 1. Load all files
-base_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Zambia\Files"
+base_path = r"outputs\Zambia\Files"
 
 df_ndvi = pd.read_csv(os.path.join(base_path, "master_southern_province_ndvi.csv"))
 df_soil = pd.read_csv(os.path.join(base_path, "master_southern_province_soil-moisture-layer2.csv"))

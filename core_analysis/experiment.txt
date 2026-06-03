@@ -23,6 +23,7 @@ Weaknesses
 - No spatial contiguity — A district in Nigeria and one in South Africa can be in the same cluster if their drought patterns match exactly.
 - Spherical bias — K-Means assumes clusters are spherical. Real drought regions can be elongated or irregular.
 - K must be chosen manually
+
 Script 2: spatial_agglomerative_clustering.py — AZP-Style Spatial Clustering
 What It Does
 Same input (2016 districts, 26-year drought history, coordinates). But instead of K-Means, it uses hierarchical agglomerative clustering with a spatial contiguity constraint.
@@ -59,7 +60,7 @@ Strengths
 - Spatial contiguity guaranteed — No scattered districts. Every cluster is a connected geographic region.
 - Arbitrary shapes — Can produce elongated or irregular cluster shapes (drought regions follow climate patterns, not circles).
 - Auto K detection — No manual guessing.
-- Academic gold standard — Duque, Anselin & Rey (2012) max-p regions; Guo (2008) REDCAP. This is what Massimo asked for when he said "Spatially Constrained Agglomerative Clustering."
+- Academic gold standard — Duque, Anselin & Rey (2012) max-p regions; Guo (2008) REDCAP. i.e "Spatially Constrained Agglomerative Clustering."
 Weaknesses
 - Slightly slower — O(N²) vs O(N) for K-Means (still fast for 2000 districts)
 - k-NN is an approximation — True contiguity requires polygon intersection checks, but k-NN with 10 neighbors is a good practical substitute
@@ -67,7 +68,7 @@ Weaknesses
 Comparison Table
 Aspect	Script 1 (K-Means)	Script 2 (Agglomerative + Spatial)
 Core algorithm	Partition-based	Hierarchical (bottom-up merge)
-Spatial contiguity Not enforced	Guaranteed via k-NN constraint
+Spatial contiguity	Not enforced	Guaranteed via k-NN constraint
 K selection	Manual	Auto (Silhouette) or manual
 Cluster shape	Spherical only	Arbitrary shapes
 Speed	Fast (seconds)	Moderate (10-20 seconds)

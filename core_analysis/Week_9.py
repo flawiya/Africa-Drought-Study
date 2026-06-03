@@ -35,7 +35,7 @@ import matplotlib.pyplot as plt
 # =============================================================================
 
 # We use Raw Strings (r"") to handle Windows backslashes and spaces safely.
-BASE_DIR = Path(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk")
+BASE_DIR = Path(r".")
 DATA_DIR = BASE_DIR / "Drought" / "data"
 OUTPUT_DIR = BASE_DIR / "Output"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

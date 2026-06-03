@@ -15,8 +15,8 @@ import matplotlib as mpl
 # 1. LOAD DATA & FORMATTING
 # =========================================================
 # Paths based on your setup
-data_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Zambia\Files\ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv"
-shape_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Zambia\Output\Zambia_agri_districts.shp"
+data_path = r"outputs\Zambia\Files\ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv"
+shape_path = r"outputs\Zambia\Output\Zambia_agri_districts.shp"
 
 print("📂 Loading ERA5-Land Data...")
 df = pd.read_csv(data_path)

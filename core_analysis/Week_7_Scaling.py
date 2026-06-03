@@ -23,7 +23,7 @@ import numpy as np
 # 1. LOAD TEMPORAL DATA
 # =========================================================
 # This file contains your raw 'volumetric_soil_water_layer_2'
-path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv"
+path = r"data\Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv"
 df = pd.read_csv(path)
 
 # =========================================================
@@ -54,7 +54,7 @@ df_risk = df[(df['month'] >= 1) & (df['month'] <= 4)].copy()
 # 4. LOAD AND OPTIMIZE CONTINENTAL SHAPEFILE
 # =========================================================
 print("Loading and Simplifying Shapefile...")
-shp_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\africa_agricultural_domain_2019\africa_agricultural_domain_2019.shp"
+shp_path = r"outputs\africa_agricultural_domain_2019\africa_agricultural_domain_2019.shp"
 gdf_africa = gpd.read_file(shp_path)
 
 # Simplify geometry to save memory (CRITICAL for 3,000+ districts)

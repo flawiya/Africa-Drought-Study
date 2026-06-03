@@ -10,11 +10,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # 1. LOAD ERA5 SOIL MOISTURE DATA (CSV)
-era5_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv"
+era5_path = r"data\Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv"
 df_era5 = pd.read_csv(era5_path)
 
 # 2. LOAD GADM DISTRICT SHAPEFILE (.shp)
-gadm_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\africa_agricultural_domain_2019\africa_agricultural_domain_2019.shp"
+gadm_path = r"data\africa_agricultural_domain_2019\africa_agricultural_domain_2019.shp"
 gdf_districts = gpd.read_file(gadm_path)
 
 # 3. STANDARDIZE AND OPTIMIZE
@@ -65,8 +65,8 @@ plt.show()
 import geopandas as gpd
 
 # 1. Load your shapefiles
-district_shp = gpd.read_file(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\africa_agricultural_domain_2019\africa_agricultural_domain_2019.shp") # Your ag districts
-geoglam_shp = gpd.read_file(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Notebooks\GEOGLAM_CM4EW_Calendars_V1.4\GEOGLAM_CM4EW_Calendars_V1.4\GEOGLAM_CM4EW_Calendars_V1.4.shp")  # GEOGLAM calendar
+district_shp = gpd.read_file(r"data\africa_agricultural_domain_2019\africa_agricultural_domain_2019.shp") # Your ag districts
+geoglam_shp = gpd.read_file(r"./Notebooks\GEOGLAM_CM4EW_Calendars_V1.4\GEOGLAM_CM4EW_Calendars_V1.4\GEOGLAM_CM4EW_Calendars_V1.4.shp")  # GEOGLAM calendar
 
 # Make sure they share the same Coordinate Reference System (CRS)
 district_shp = district_shp.to_crs(geoglam_shp.crs)
@@ -156,7 +156,7 @@ print(maize_active[['ADM_NAME', 'crop', 'planting', 'Adjusted_Start', 'harvest',
 
 import pandas as pd
 
-era5_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv"
+era5_path = r"data\Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv"
 
 # Load the dataset using pandas
 era5_df = pd.read_csv(era5_path)
@@ -189,7 +189,7 @@ import geopandas as gpd
 
 # Load your agricultural shapefile
 # Replace 'path_to_your_shp.shp' with your actual file path
-districts_gdf = gpd.read_file(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\africa_agricultural_domain_2019\africa_agricultural_domain_2019.shp")
+districts_gdf = gpd.read_file(r"data\africa_agricultural_domain_2019\africa_agricultural_domain_2019.shp")
 
 # Print columns to find the district name column (e.g., 'DISTRICT', 'ADM2_EN', etc.)
 print("Shapefile columns:", districts_gdf.columns)

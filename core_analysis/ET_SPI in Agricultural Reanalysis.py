@@ -69,17 +69,17 @@ warnings.filterwarnings('ignore')
 
 
 # Ethiopia admin 1
-gadm = gpd.read_file("C:\\Users\\FlawiyaShirishMore\\OneDrive - Africa Specialty Risks Ltd\\ASR-Parametric_Research_Study\\africa_risk\\Drought\\data\\gadm_410-levels\\gadm_410-levels.gpkg"
+gadm = gpd.read_file("data\\gadm_410-levels\\gadm_410-levels.gpkg"
 , layer='ADM_0')
 ethiopia = gadm[gadm['COUNTRY'] == 'Ethiopia'] 
 
 #Ethiopia admin 2
-gadm_data = gpd.read_file("C:\\Users\\FlawiyaShirishMore\\OneDrive - Africa Specialty Risks Ltd\\ASR-Parametric_Research_Study\\africa_risk\\Drought\\data\\gadm_410-levels\\gadm_410-levels.gpkg"
+gadm_data = gpd.read_file("data\\gadm_410-levels\\gadm_410-levels.gpkg"
 , layer='ADM_2')
 ethiopia_districts = gadm_data[gadm_data['COUNTRY'] == 'Ethiopia']
 
 # Ethiopia_agri shp
-Ethiopia_cropland = gpd.read_file(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\output\ethiopia_filtered_data.shp"
+Ethiopia_cropland = gpd.read_file(r"outputs\ethiopia\output\ethiopia_filtered_data.shp"
 )
 
 
@@ -87,7 +87,7 @@ Ethiopia_cropland = gpd.read_file(r"C:\Users\FlawiyaShirishMore\OneDrive - Afric
 
 
 # Load your long format data
-df= pd.read_csv("C:\\Users\\FlawiyaShirishMore\\OneDrive - Africa Specialty Risks Ltd\\ASR-Parametric_Research_Study\\africa_risk\\Drought\\Output\\ethiopia\\content\\ethiopia_rainfall_master_cleaned.csv")
+df= pd.read_csv("outputs\\ethiopia\\content\\ethiopia_rainfall_master_cleaned.csv")
 print(df.columns.tolist())
 print(df.info())
 
@@ -111,7 +111,7 @@ plt.figtext(0.5, 0.009, "Figure 2: Average Monthly Rainfall Across Ethiopian Dis
             ha='center', fontsize=10, style='italic', wrap=True)
 
 # SAVE FIRST - BEFORE tight_layout()
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Ethiopia_Monthly_Rainfall_Climatology.png", 
+plt.savefig(r"outputs\Ethiopia_Monthly_Rainfall_Climatology.png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 
 plt.tight_layout()
@@ -229,7 +229,7 @@ trigger_threshold = -1.5 # https://climatedataguide.ucar.edu/climate-data/standa
 df['is_drought_trigger'] = df['SPI_3'] <= trigger_threshold
 
 # Save the final results to be merged with your shapefile later
-df.to_csv(os.path.join(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output",  "district_spi_results.csv"), 
+df.to_csv(os.path.join(r"./Output",  "district_spi_results.csv"), 
           index=False)
 
 print("\nCalculation Complete! Preview of the results:")
@@ -253,7 +253,7 @@ print(df[['ADM_NAME', 'year', 'month', 'precip_3m', 'SPI_3', 'is_drought_trigger
 
 
 # Load your completed dataset
-df = pd.read_csv(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\district_spi_results.csv")
+df = pd.read_csv(r"outputs\district_spi_results.csv")
 
 # TEMPORAL HEATMAP (Historical Validation)
 # Critical agricultural month (September - end of Kiremt rains)
@@ -284,7 +284,7 @@ plt.axhline(y=heatmap_data.index.get_loc(2015), color='black', linewidth=3, line
 plt.legend()
 plt.tight_layout()
 # SAVE FIRST - BEFORE tight_layout()
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Ethiopia_Historical_Temporal_Drought_Matrix_September.png", 
+plt.savefig(r"outputs\Ethiopia_Historical_Temporal_Drought_Matrix_September.png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.show()
 
@@ -309,7 +309,7 @@ plt.show()
 # PATIO-TEMPORAL TRIGGER MAP (Mapping a payout event)
 # Mapping the severe drought of September 2015
 # 1. Load your Ethiopia District Shapefile (Update path as needed)
-shapefile_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\output\ethiopia_districts_ADM_NAME.shp"
+shapefile_path = r"outputs\ethiopia\output\ethiopia_districts_ADM_NAME.shp"
 districts_map = gpd.read_file(shapefile_path)
 
 # Ensure the column names match for merging (Assume the shapefile has 'NAME_2' for districts)
@@ -342,7 +342,7 @@ merged_map = districts_map.merge(drought_event_2015, on='ADM_NAME', how='left')
 # plt.title("Spatial Distribution of Agricultural Drought Trigger: September 2015", fontsize=15)
 #plt.figtext(0.5, 0.002, "Figure 4: Spatial Distribution of Agricultural Drought Trigger: September 2015",ha='center', fontsize=10, style='italic', wrap=True)
 # SAVE FIRST - BEFORE tight_layout()
-#plt.savefig(r"C:\Users\flavi\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Spatial_Distribution_of_Agricultural_Drought_Trigger_September_2015.png", dpi=300, bbox_inches='tight', facecolor='white')
+#plt.savefig(r"outputs/Spatial_Distribution_of_Agricultural_Drought_Trigger_September_2015.png", dpi=300, bbox_inches='tight', facecolor='white')
 #plt.axis('off') # Hides the lat/lon axis box for a cleaner look
 #plt.tight_layout()
 #plt.show()
@@ -445,7 +445,7 @@ title_html = '''
 m.get_root().html.add_child(folium.Element(title_html))
 
 # 9. Save & display
-save_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Ethiopia_SPI_Drought_Comparison.html"
+save_path = r"outputs\Ethiopia_SPI_Drought_Comparison.html"
 m.save(save_path)
 print(f"✅ Saved: {save_path}")
 m
@@ -464,7 +464,7 @@ m
 
 # 1. Load your Data
 # df_spei is the GEE data you downloaded. Ensure it has columns: ['ADM_NAME', 'year', 'month', 'SPEI_3']
-df_spei = pd.read_csv("C:\\Users\\FlawiyaShirishMore\\OneDrive - Africa Specialty Risks Ltd\\ASR-Parametric_Research_Study\\africa_risk\\Drought\\Output\\ethiopia\\content\\ethiopia_spei03_master_cleaned.csv")
+df_spei = pd.read_csv("outputs\\ethiopia\\content\\ethiopia_spei03_master_cleaned.csv")
 
 
 # In[25]:
@@ -474,8 +474,8 @@ import pandas as pd
 import numpy as np
 
 # 1. Load data (your files)
-df = pd.read_csv(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\district_spi_results.csv")
-df_spei = pd.read_csv(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\content\ethiopia_spei03_master_cleaned.csv")
+df = pd.read_csv(r"outputs\district_spi_results.csv")
+df_spei = pd.read_csv(r"outputs\ethiopia\content\ethiopia_spei03_master_cleaned.csv")
 
 # 2. Print columns FIRST
 print("df columns:", df.columns.tolist())
@@ -588,7 +588,7 @@ plt.figtext(0.5, 0.002, "Figure 5: SPI-3 vs SPEI-3 Validation for Ethiopian Dist
 plt.colorbar(label='Density of Months')
 plt.legend()
 # SAVE FIRST - BEFORE tight_layout()
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\SPI-3 vs SPEI-3 Validation for Ethiopian.png", 
+plt.savefig(r"outputs\SPI-3 vs SPEI-3 Validation for Ethiopian.png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.show()
 

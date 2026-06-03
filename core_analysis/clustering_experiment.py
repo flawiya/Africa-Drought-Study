@@ -14,7 +14,7 @@ import plotly.express as px
 # =============================================================
 K = 4                    # number of clusters (try 4, 6, 8, 10)
 LAMBDA = 0.5             # spatial weight: 0=pure weather, 1=pure geography
-OUTPUT_DIR = "experiments"
+OUTPUT_DIR = "outputs/clustering_experiment"
 # =============================================================
 
 BASE = os.path.dirname(os.path.abspath(__file__))

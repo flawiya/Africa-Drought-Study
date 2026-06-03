@@ -78,31 +78,31 @@ keys = ['ADM_NAME', 'year', 'month', 'lat_wgs84', 'lon_wgs84']
 
 # 1. Load Rainfall (CHIRPS)
 df_precip = pd.read_csv(
-    r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\content\ethiopia_rainfall_master_cleaned_with_latlon.csv", 
+    r"outputs\ethiopia\content\ethiopia_rainfall_master_cleaned_with_latlon.csv", 
     usecols=keys + ['precip_mm']
 )
 
 # 2. Load ERA5 (Temp, PET, Soil Moisture)
 df_era5 = pd.read_csv(
-    r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\content\ethiopia_era5_master_cleaned_with_latlon.csv", 
+    r"outputs\ethiopia\content\ethiopia_era5_master_cleaned_with_latlon.csv", 
     usecols=keys + ['temp_c', 'pet_mm', 'soil_0_7cm', 'soil_7_28cm']
 )
 
 # 3. Load CSIC SPEI-03 (The Benchmark)
 df_csic = pd.read_csv(
-    r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\content\ethiopia_spei03_master_cleaned_with_latlon.csv", 
+    r"outputs\ethiopia\content\ethiopia_spei03_master_cleaned_with_latlon.csv", 
     usecols=keys + ['spei_03']
 )
 
 # 4. Load NDVI (Vegetation)
 df_ndvi = pd.read_csv(
-    r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\content\ethiopia_ndvi_master_cleaned_with_latlon.csv", 
+    r"outputs\ethiopia\content\ethiopia_ndvi_master_cleaned_with_latlon.csv", 
     usecols=keys + ['ndvi']
 )
 
 # 5. Load LST (Surface Temp)
 df_lst = pd.read_csv(
-    r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\content\ethiopia_lst_master_cleaned_with_latlon.csv", 
+    r"outputs\ethiopia\content\ethiopia_lst_master_cleaned_with_latlon.csv", 
     usecols=keys + ['lst_c']
 )
 
@@ -263,7 +263,7 @@ def plot_water_balance_scissors(district_name):
     
     # ✅ FIXED filename (dynamic district name)
     filename = f"Climatic_Water_Balance_{district_name.replace(' ', '_')}.png"
-    plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Climatic_Water_Balance(Agew_Awi)", 
+    plt.savefig(r"outputs\Climatic_Water_Balance(Agew_Awi)", 
                 dpi=300, bbox_inches='tight', facecolor='white')
     plt.show()
 
@@ -290,7 +290,7 @@ sns.heatmap(corr_matrix, annot=True, cmap='RdYlGn', center=0)
 # CAPTION at bottom (perfect placement y=0.02)
 plt.figtext(0.5, 0.002, "Figure 2: Inter-Variable Correlation (Validating Thermal & Vegetation Links)",
             ha='center', fontsize=10, style='italic', wrap=True)
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Inter_Variable_Correlation_(Validating_Thermal_&_Vegetation_Links).png", 
+plt.savefig(r"outputs\Inter_Variable_Correlation_(Validating_Thermal_&_Vegetation_Links).png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.show()
 
@@ -312,7 +312,7 @@ sns.heatmap(corr_matrix, annot=True, cmap='RdYlGn', center=0)
 # CAPTION at bottom (perfect placement y=0.02)
 plt.figtext(0.5, 0.002, "Figure 2: Inter-Variable Correlation (Validating Thermal & Vegetation Links)",
             ha='center', fontsize=10, style='italic', wrap=True)
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Correlation_matrix.png", 
+plt.savefig(r"outputs\Correlation_matrix.png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.show()
 
@@ -333,7 +333,7 @@ def plot_seasonal_trend(district_name, variable='temp_c'):
     
     # Dynamic filename matching your district
     filename = f"Seasonal_Trend_for_{district_name.replace(' ', '_')}_(2000_2025).png"
-    save_path = r"C:\\Users\\FlawiyaShirishMore\\OneDrive - Africa Specialty Risks Ltd\\ASR-Parametric_Research_Study\\africa_risk\\Drought\\Output\\" + filename
+    save_path = r"outputs\\" + filename
     plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
     plt.show()
 
@@ -357,7 +357,7 @@ plt.ylabel("CSIC SPEI-3 Value")
 plt.grid(True, linestyle='--', alpha=0.6)
 plt.figtext(0.5, 0.002, "Figure 4: Validation: Raw Water Balance (D) vs. Global CSIC SPEI Benchmark",
             ha='center', fontsize=10, style='italic', wrap=True)
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Validation:_Raw_Water_Balance_(D)_Global_CSIC_SPEI_Benchmark.png", 
+plt.savefig(r"outputs\Validation:_Raw_Water_Balance_(D)_Global_CSIC_SPEI_Benchmark.png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.show()
 
@@ -413,7 +413,7 @@ plt.figtext(0.5, 0.02,
 plt.grid(True, alpha=0.3)
 
 # 5. FIXED: Raw string path!
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Validation_Custom_SPEI_(ERA5-CHIRPS)_vs_CSIC_SPEI.png", 
+plt.savefig(r"outputs\Validation_Custom_SPEI_(ERA5-CHIRPS)_vs_CSIC_SPEI.png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.subplots_adjust(bottom=0.15)
 plt.show()
@@ -441,7 +441,7 @@ plt.figtext(0.5, 0.01,
            ha='center', fontsize=11, style='italic', wrap=True)
 plt.legend()
 # 5. FIXED: Raw string path!
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Drought_Index_Comparison(Agew_Awi).png", 
+plt.savefig(r"outputs\Drought_Index_Comparison(Agew_Awi).png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.show()
 
@@ -549,7 +549,7 @@ plt.figtext(0.5, 0.01,
            "Figure 7: The Insurance Trigger Quadrant (Year 2015)",
            ha='center', fontsize=11, style='italic', wrap=True)
 # 5. FIXED: Raw string path!
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Insurance_Trigger_Quadrant_(Year_2015).png", 
+plt.savefig(r"outputs\Insurance_Trigger_Quadrant_(Year_2015).png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.show()
 
@@ -564,7 +564,7 @@ from folium import plugins
 import branca.colormap as cm
 
 # 1. Load your Shapefile
-districts_gdf = gpd.read_file(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\output\ethiopia_districts.shp")
+districts_gdf = gpd.read_file(r"outputs\ethiopia\output\ethiopia_districts.shp")
 
 # Ensure the column names match for merging (Assume the shapefile has 'NAME_2' for districts)
 districts_gdf = districts_gdf.rename(columns={'NAME_2': 'ADM_NAME'})
@@ -637,7 +637,7 @@ folium.GeoJson(
 
 colormap.add_to(m)
 
-#m.save(r"C:\\Users\\FlawiyaShirishMore\\OneDrive - Africa Specialty Risks Ltd\\ASR-Parametric_Research_Study\\africa_risk\\Drought\\Output\\Ethiopia_Drought_Map.html")
+#m.save(r"outputs\\Ethiopia_Drought_Map.html")
 m
 
 
@@ -656,7 +656,7 @@ plt.figtext(0.5, 0.01,
            "Figure 8: Inter-Index Correlation Matrix: Proving Agricultural Impact",
            ha='center', fontsize=11, style='italic', wrap=True)
 # 5. FIXED: Raw string path!
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Inter_Index_Correlation_Matrix.png", 
+plt.savefig(r"outputs\Inter_Index_Correlation_Matrix.png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 
 plt.show()
@@ -682,7 +682,7 @@ plt.figtext(0.5, 0.01,
            "Figure 9: Validation: Atmospheric Drought (SPEI) vs. Physical Water in Soil",
            ha='center', fontsize=11, style='italic', wrap=True)
 # 5. FIXED: Raw string path!
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Validate_Atmospheric_Drought_(SPEI)_vs_Physical_Water_in_Soil.png", 
+plt.savefig(r"outputs\Validate_Atmospheric_Drought_(SPEI)_vs_Physical_Water_in_Soil.png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 
 
@@ -840,7 +840,7 @@ drought_counts.plot(kind='bar', color='darkred')
 #plt.title("PARI Reanalysis: Number of Districts Triggered per Year (2000-2025)")
 plt.ylabel("Number of Districts Payout Triggered")
 # 5. FIXED: Raw string path!
-plt.savefig(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\PARI_Reanalysis_Number_of_Districts_Triggered_per_Year-(2000-2025).png", 
+plt.savefig(r"outputs\PARI_Reanalysis_Number_of_Districts_Triggered_per_Year-(2000-2025).png", 
             dpi=300, bbox_inches='tight', facecolor='white')
 plt.show()
 
@@ -1226,9 +1226,7 @@ plt.suptitle(f"Agricultural Drought Evolution & Insurance Triggers\nAgew Awi Dis
 plt.tight_layout()
 
 # Save
-save_path = (f"C:\\Users\\FlawiyaShirishMore\\OneDrive - Africa Specialty Risks Ltd\\"
-             f"ASR-Parametric_Research_Study\\africa_risk\\Drought\\Output\\"
-             f"Agew_Awi_Drought_TimeSeries_Final.png")
+save_path = "outputs/Agew_Awi_Drought_TimeSeries_Final.png"
 plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
 plt.show()
 
@@ -1241,17 +1239,17 @@ print(f"✅ Plot saved: {save_path}")
 
 
 # Ethiopia admin 1
-gadm = gpd.read_file(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\gadm_410-levels\gadm_410-levels.gpkg"
+gadm = gpd.read_file(r"data\gadm_410-levels\gadm_410-levels.gpkg"
 , layer='ADM_0')
 ethiopia = gadm[gadm['COUNTRY'] == 'Ethiopia'] 
 
 #Ethiopia admin 2
-gadm_data = gpd.read_file(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\gadm_410-levels\gadm_410-levels.gpkg"
+gadm_data = gpd.read_file(r"data\gadm_410-levels\gadm_410-levels.gpkg"
 , layer='ADM_2')
 ethiopia_districts = gadm_data[gadm_data['COUNTRY'] == 'Ethiopia']
 
 # Ethiopia_agri shp
-Ethiopia_cropland = gpd.read_file(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data\gadm_410-levels\gadm_410-levels.gpkg"
+Ethiopia_cropland = gpd.read_file(r"data\gadm_410-levels\gadm_410-levels.gpkg"
 )
 
 
@@ -1261,7 +1259,7 @@ Ethiopia_cropland = gpd.read_file(r"C:\Users\FlawiyaShirishMore\OneDrive - Afric
 # PATIO-TEMPORAL TRIGGER MAP (Mapping a payout event)
 # Mapping the severe drought of September 2015
 # 1. Load your Ethiopia District Shapefile (Update path as needed)
-shapefile_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\ethiopia\output\ethiopia_districts_ADM_NAME.shp"
+shapefile_path = r"outputs\ethiopia\output\ethiopia_districts_ADM_NAME.shp"
 districts_map = gpd.read_file(shapefile_path)
 
 # Ensure the column names match for merging (Assume the shapefile has 'NAME_2' for districts)
@@ -1379,7 +1377,7 @@ title_html = '''
 m.get_root().html.add_child(folium.Element(title_html))
 
 # 13. Save
-save_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Ethiopia_Drought_Map_Sep_Fixed.html"
+save_path = r"outputs\Ethiopia_Drought_Map_Sep_Fixed.html"
 m.save(save_path)
 print(f"✅ Map saved: {save_path}")
 
@@ -1604,7 +1602,7 @@ plt.show()
 # In[89]:
 
 
-master_df.to_csv(r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\master_df.csv")
+master_df.to_csv(r"outputs\master_df.csv")
 
 
 # **Reference:**

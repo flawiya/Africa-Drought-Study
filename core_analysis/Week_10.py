@@ -17,7 +17,7 @@ import seaborn as sns
 
 
 #define paths
-BASE_DATA_PATH = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\data"
+BASE_DATA_PATH = r"./data"
 SHP_PATH = os.path.join(BASE_DATA_PATH, "africa_agricultural_domain_2019", "africa_agricultural_domain_2019.shp")
 GEOGLAM_PATH = os.path.join(BASE_DATA_PATH, "GEOGLAM_CM4EW_Calendars_V1.4", "GEOGLAM_CM4EW_Calendars_V1.4.shp")
 ERA5_CSV_PATH = os.path.join(BASE_DATA_PATH, "Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv")

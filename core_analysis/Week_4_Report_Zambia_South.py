@@ -16,7 +16,7 @@ from IPython.display import display, HTML
 # ==========================================
 
 # Note: Update this path to your local environment if necessary
-base_path = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Zambia\Files"
+base_path = r"outputs\Zambia\Files"
 
 def load_and_merge_data(path):
     print("Loading dataframes...")

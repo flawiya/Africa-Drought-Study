@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 # =============================================================================
 # 1. CONFIGURATION AND BASE PATHS
 # =============================================================================
-BASE_PATH = r"C:\Users\FlawiyaShirishMore\OneDrive - Africa Specialty Risks Ltd\ASR-Parametric_Research_Study\africa_risk\Drought\Output\Zambia\Files"
+BASE_PATH = r"outputs\Zambia\Files"
 OUTPUT_PATH = os.path.join(BASE_PATH, "Analysis_Outputs")
 os.makedirs(OUTPUT_PATH, exist_ok=True)
 

@@ -27,13 +27,13 @@ warnings.filterwarnings("ignore")
 # =============================================================
 # CONFIG
 # =============================================================
-CLIMATE_CSV_PATH = "C:/Users/FlawiyaShirishMore/Downloads/Africa-Drought-Study/data/climate_merged.csv"  # set to path of climate_merged.csv if available
+CLIMATE_CSV_PATH = "data/climate_merged.csv"  # set to path of climate_merged.csv if available
 
 K = 0                   # 0 = auto-detect via silhouette
 K_MAX = 7               # max K when auto-detecting
 SPATIAL_NEIGHBORS = 10
 LAMBDA = 0.1            # must match the clustering run
-OUTPUT_DIR = os.path.join("outputs", "ENSO_results")
+OUTPUT_DIR = os.path.join("outputs", "ENSO_Correlation_Analysis")
 # =============================================================
 
 BASE = os.path.dirname(os.path.abspath(__file__))

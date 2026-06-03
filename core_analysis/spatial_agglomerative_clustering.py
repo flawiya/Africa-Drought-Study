@@ -28,7 +28,7 @@ K = 0                          # 0 = auto-detect via silhouette, or set to fixed
 K_MAX = 7                     # max K to evaluate when auto-detecting
 SPATIAL_NEIGHBORS = 10          # k for k-NN spatial contiguity graph
 LAMBDA = 0.3                   # 0=pure weather, 1=pure geography
-OUTPUT_DIR = "experiments"
+OUTPUT_DIR = "outputs/spatial_agglomerative_clustering"
 # =============================================================
 BASE = os.path.dirname(os.path.abspath(__file__))
 PROJ = os.path.dirname(BASE)
