@@ -33,7 +33,7 @@ K = 0                   # 0 = auto-detect via silhouette
 K_MAX = 7               # max K when auto-detecting
 SPATIAL_NEIGHBORS = 10
 LAMBDA = 0.1            # must match the clustering run
-OUTPUT_DIR = "experiments"
+OUTPUT_DIR = os.path.join("outputs", "ENSO_results")
 # =============================================================
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -74,7 +74,7 @@ gdf = gdf.drop_duplicates(subset="ADM_NAME")
 gdf_c = gdf.set_index("ADM_NAME").to_crs(epsg=3857)
 centroids = gdf_c.centroid
 
-common = list(set(pivot.index) & set(gdf_c.index))
+common = sorted(set(pivot.index) & set(gdf_c.index))
 weather = StandardScaler().fit_transform(pivot.loc[common])
 
 c = centroids.loc[common]
@@ -113,8 +113,23 @@ pivot_g = group_means.pivot_table(
 )
 years = pivot_g.index.values
 
-print(f"Clusters: {K}, Years: {years[0]}–{years[-1]}, "
+print(f"Clusters: {K}, Years: {years[0]}-{years[-1]}, "
       f"Districts: {len(common)}")
+
+# Save location-level drought index time series for every aligned district
+location_timeseries = pivot.loc[common].reset_index().melt(
+    id_vars="feature_id",
+    var_name="year",
+    value_name="Drought_Days"
+)
+location_timeseries["cluster"] = location_timeseries["feature_id"].map(label_dict)
+location_timeseries["ADM_NAME"] = location_timeseries["feature_id"]
+location_timeseries = location_timeseries[["ADM_NAME", "cluster", "year", "Drought_Days"]]
+location_timeseries_path = os.path.join(
+    OUT, f"enso_location_timeseries_k{K}_l{str(LAMBDA).replace('.', '')}.csv"
+)
+location_timeseries.to_csv(location_timeseries_path, index=False)
+print(f"Location timeseries CSV -> {location_timeseries_path}")
 
 # ---------------------------------------------------------------------------
 # 2. LOAD ENSO DATA
@@ -181,14 +196,33 @@ common_years = np.intersect1d(years, enso_annual["year"].values)
 pivot_g = pivot_g.loc[common_years]
 enso_vals = enso_annual.set_index("year").loc[common_years, "enso"].values
 
-print(f"\nAligned years: {common_years[0]}–{common_years[-1]} "
+# Save district vs ENSO correlation table
+location_vs_enso = []
+for dist_id in common:
+    dist_series = pivot.loc[dist_id, common_years].values
+    r_val, p_val = pearsonr(dist_series, enso_vals)
+    location_vs_enso.append({
+        "ADM_NAME": dist_id,
+        "cluster": label_dict[dist_id] + 1,
+        "pearson_r": r_val,
+        "pearson_p": p_val,
+    })
+location_vs_enso_df = pd.DataFrame(location_vs_enso)
+location_vs_enso_path = os.path.join(
+    OUT,
+    f"enso_location_vs_enso_correlations_k{K}_l{str(LAMBDA).replace('.', '')}.csv"
+)
+location_vs_enso_df.to_csv(location_vs_enso_path, index=False)
+print(f"Location-vs-ENSO correlation CSV -> {location_vs_enso_path}")
+
+print(f"\nAligned years: {common_years[0]}-{common_years[-1]} "
       f"({len(common_years)} years)")
 
 # ---------------------------------------------------------------------------
 # 3. CORRELATION: each cluster vs ENSO
 # ---------------------------------------------------------------------------
 print(f"\n{'='*60}")
-print(f"CLUSTER vs ENSO CORRELATION (λ={LAMBDA}, K={K})")
+print(f"CLUSTER vs ENSO CORRELATION (lambda={LAMBDA}, K={K})")
 print(f"{'='*60}")
 results = []
 for cid in range(K):
@@ -208,7 +242,7 @@ for cid in range(K):
         "spearman_sig": sig_sp,
     })
     print(f"  G{cid+1}: Pearson r={r_pe:+.3f} {sig_pe}"
-          f"  |  Spearman ρ={r_sp:+.3f} {sig_sp}")
+          f"  |  Spearman rho={r_sp:+.3f} {sig_sp}")
 
 # ---------------------------------------------------------------------------
 # 4. VISUALIZATIONS
@@ -245,7 +279,7 @@ fig_bar.update_layout(
     barmode="group",
 )
 fig_bar.write_html(os.path.join(OUT, f"enso_correlation_k{K}_l{str(LAMBDA).replace('.','')}.html"))
-print(f"\nBar chart → {OUT}/enso_correlation_k{K}_l{str(LAMBDA).replace('.','')}.html")
+print(f"\nBar chart -> {OUT}/enso_correlation_k{K}_l{str(LAMBDA).replace('.','')}.html")
 
 # 4b. Dual-axis time series: cluster trajectories + ENSO
 fig_dual = make_subplots(specs=[[{"secondary_y": True}]])
@@ -275,7 +309,36 @@ fig_dual.update_layout(
 fig_dual.update_yaxes(title_text="Mean Drought Days / Year", secondary_y=False)
 fig_dual.update_yaxes(title_text="ONI (°C)", secondary_y=True)
 fig_dual.write_html(os.path.join(OUT, f"enso_trajectories_k{K}_l{str(LAMBDA).replace('.','')}.html"))
-print(f"Dual-axis plot → {OUT}/enso_trajectories_k{K}_l{str(LAMBDA).replace('.','')}.html")
+print(f"Dual-axis plot -> {OUT}/enso_trajectories_k{K}_l{str(LAMBDA).replace('.','')}.html")
+
+# ---------------------------------------------------------------------------
+# Save cluster mean correlation matrix and HTML heatmap
+# ---------------------------------------------------------------------------
+cluster_corr = pivot_g.corr(method="pearson")
+cluster_corr_path = os.path.join(OUT, f"enso_cluster_corr_matrix_k{K}_l{str(LAMBDA).replace('.','')}.csv")
+cluster_corr.to_csv(cluster_corr_path)
+print(f"Cluster correlation matrix CSV -> {cluster_corr_path}")
+
+fig_corr_matrix = go.Figure(
+    go.Heatmap(
+        z=cluster_corr.values,
+        x=cluster_corr.columns.astype(str),
+        y=cluster_corr.index.astype(str),
+        colorscale="RdBu_r",
+        zmin=-1,
+        zmax=1,
+        colorbar=dict(title="Pearson r")
+    )
+)
+fig_corr_matrix.update_layout(
+    title=f"Cluster Mean Drought Correlation Matrix (λ={LAMBDA}, K={K})",
+    xaxis_title="Cluster",
+    yaxis_title="Cluster",
+    template="plotly_white"
+)
+fig_corr_matrix_path = os.path.join(OUT, f"enso_cluster_corr_matrix_k{K}_l{str(LAMBDA).replace('.','')}.html")
+fig_corr_matrix.write_html(fig_corr_matrix_path)
+print(f"Cluster correlation heatmap -> {fig_corr_matrix_path}")
 
 # ---------------------------------------------------------------------------
 # 5. SUMMARY
@@ -294,5 +357,64 @@ with open(summary_path, "w", encoding="utf-8") as f:
                 f"{r['pearson_p']:.4f}    "
                 f"{r['spearman_rho']:+.3f}      "
                 f"{r['spearman_p']:.4f}\n")
-print(f"Summary → {summary_path}")
-print(f"\nDone — outputs in: {OUT}")
+print(f"Summary -> {summary_path}")
+print(f"\nDone - outputs in: {OUT}")
+
+# ---------------------------------------------------------------------------
+# 5. NEW: DISTRICT-LEVEL ENSO CORRELATION MAP
+# ---------------------------------------------------------------------------
+print("\nGenerating District-level ENSO Correlation Map...")
+
+# Calculate correlation for each district individually
+district_corrs = []
+for dist_id in common:
+    # Get drought days for this specific district across the aligned years
+    dist_series = pivot.loc[dist_id, common_years].values
+    
+    # Calculate Pearson correlation with ENSO
+    r_val, p_val = pearsonr(dist_series, enso_vals)
+    
+    district_corrs.append({
+        "ADM_NAME": dist_id,
+        "ENSO_Correlation": r_val,
+        "P_Value": p_val,
+        "Sensitivity": "High" if p_val < 0.05 else "Low"
+    })
+
+# Convert to DataFrame and merge with the GeoDataFrame
+df_dist_corr = pd.DataFrame(district_corrs)
+gdf_enso_map = gdf_c.loc[common].reset_index().merge(df_dist_corr, on="ADM_NAME")
+
+# Create the interactive map
+# We use a Diverging color scale (RdBu_r): 
+# Red = Positive Correlation (El Niño = More Drought)
+# Blue = Negative Correlation (El Niño = Less Drought)
+m_enso = gdf_enso_map.explore(
+    column="ENSO_Correlation",
+    cmap="RdBu_r",
+    vmin=-1, vmax=1,
+    legend=True,
+    tooltip=["ADM_NAME", "ENSO_Correlation", "Sensitivity"],
+    popup=True,
+    tiles="CartoDB positron"
+)
+
+# Save the map
+enso_map_path = os.path.join(OUT, f"enso_district_map_l{str(LAMBDA).replace('.','')}.html")
+m_enso.save(enso_map_path)
+print(f"Interactive ENSO Map saved to: {enso_map_path}")
+
+# Save cluster membership map
+cluster_geo = gdf_c.loc[common].reset_index()
+cluster_geo["cluster"] = cluster_geo["ADM_NAME"].map(lambda x: label_dict.get(x, -1) + 1)
+cluster_map = cluster_geo.explore(
+    column="cluster",
+    cmap="tab20",
+    legend=True,
+    tooltip=["ADM_NAME", "cluster"],
+    popup=True,
+    tiles="CartoDB positron"
+)
+cluster_map_path = os.path.join(OUT, f"enso_cluster_map_k{K}_l{str(LAMBDA).replace('.','')}.html")
+cluster_map.save(cluster_map_path)
+print(f"Cluster membership map saved to: {cluster_map_path}")
