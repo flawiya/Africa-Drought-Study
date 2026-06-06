@@ -1,0 +1,38 @@
+Script: ENSO_Correlation_Analysis.py
+Timestamp: 2026-06-03T09:29:25.280894
+Execution Time: 65.85s
+Return Code: 0
+Output Directory: C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\outputs\ENSO_Correlation_Analysis
+
+=== STDOUT ===
+Optimal K = 3
+Clusters: 3, Years: 2000-2025, Districts: 2016
+Location timeseries CSV -> C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\outputs\ENSO_Correlation_Analysis\enso_location_timeseries_k3_l01.csv
+
+Loading NINO34 from: data/climate_merged.csv
+  Found column 'NINO34', 27 years
+Location-vs-ENSO correlation CSV -> C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\outputs\ENSO_Correlation_Analysis\enso_location_vs_enso_correlations_k3_l01.csv
+
+Aligned years: 2000-2025 (26 years)
+
+============================================================
+CLUSTER vs ENSO CORRELATION (lambda=0.1, K=3)
+============================================================
+  G1: Pearson r=-0.033 ns  |  Spearman rho=-0.137 ns
+  G2: Pearson r=+0.595 **  |  Spearman rho=+0.492 *
+  G3: Pearson r=+0.005 ns  |  Spearman rho=+0.049 ns
+
+Bar chart -> C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\outputs\ENSO_Correlation_Analysis/enso_correlation_k3_l01.html
+Dual-axis plot -> C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\outputs\ENSO_Correlation_Analysis/enso_trajectories_k3_l01.html
+Cluster correlation matrix CSV -> C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\outputs\ENSO_Correlation_Analysis\enso_cluster_corr_matrix_k3_l01.csv
+Cluster correlation heatmap -> C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\outputs\ENSO_Correlation_Analysis\enso_cluster_corr_matrix_k3_l01.html
+Summary -> C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\outputs\ENSO_Correlation_Analysis\enso_summary_k3_l01.txt
+
+Done - outputs in: C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\outputs\ENSO_Correlation_Analysis
+
+Generating District-level ENSO Correlation Map...
+Interactive ENSO Map saved to: C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\outputs\ENSO_Correlation_Analysis\enso_district_map_l01.html
+Cluster membership map saved to: C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\outputs\ENSO_Correlation_Analysis\enso_cluster_map_k3_l01.html
+
+
+=== STDERR ===
