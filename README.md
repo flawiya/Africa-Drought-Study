@@ -16,7 +16,6 @@ While traditional indices like NDVI (Vegetation) measure the *result* of drought
 - `core_analysis/`: Primary implementation of SSI calculation using ERA5-Land reanalysis data.
 - `data_acquisition/`: GEE scripts to extract volumetric soil water and climate variables.
 - `utils/`: Spatial-join tools to align GADM district boundaries with gridded soil data.
-- `reports/`: Case studies for Ethiopia and Zambia Southern Province validating SSI against historical disaster records.
 
 ---
 *Developed for Africa Specialty Risks Ltd.*
