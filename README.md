@@ -65,4 +65,4 @@ python core_analysis/Africa_districts_with_different_SSI_threshold_variation.py
 
 ## 📖 4. Reference Documentation
 
-- 📘 [DROUGHT_PARAMETRIC_METHODOLOGY_GUIDE.md](file:///c:/Users/FlawiyaShirishMore/OneDrive%20-%20Africa%20Specialty%20Risks%20Ltd/ASR-Parametric_Research_Study/Africa-Drought-Study/docs/DROUGHT_PARAMETRIC_METHODOLOGY_GUIDE.md)
+- 📘 [DROUGHT_PARAMETRIC_METHODOLOGY_GUIDE.md](docs/DROUGHT_PARAMETRIC_METHODOLOGY_GUIDE.md)
