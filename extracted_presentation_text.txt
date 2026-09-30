@@ -1,0 +1,204 @@
+=== slide1.xml ===
+Spatio
+-Temporal Drought Risk Analysis for Africa
+April 2026
+Private & Confidential
+Utilizing 25 years of historical climate data
+
+=== slide2.xml ===
+“To enable a "Cross-Continental Spread" of risk”
+Objective: 
+Private & Confidential
+Problem
+:
+A single Drought event can trigger simultaneous payouts across multiple districts.
+Solution:
+Identifying "Uncorrelated Regions." By insuring districts that do not fail at the same time, the insurance fund maintains financial stability.
+
+=== slide3.xml ===
+Global Administrative Areas (GADM 4.1) Administrative Level districts.
+Global Land Analysis and Discovery (GLAD) - 30m - Landsat time series.
+Centroid-based spatial joining ensures we capture the core climatic profile of every district.
+The Maize Focus: Utilizing GEOGLAM Maize 1 - 5km calendars to isolate the primary growing season for maximum impact (Group on Earth Observations Global Agricultural Monitoring, 2024).
+Private & Confidential
+Area of Interest
+3
+
+=== slide4.xml ===
+Z-Score Standardization: Converts raw moisture data into probability-based Z-scores (
+AghaKouchak
+, 2014).
+Historical Baseline: Establishes a 25-year moisture record for every specific day of the year.
+Gamma Fitting: Models data using Gamma curves to handle non-negative, right-skewed distributions.
+Normal Mapping: Maps current percentiles to a Standard Normal SSI for universal risk assessment.
+4
+Private & Confidential
+Standardized Soil Moisture Index (SSI) 
+
+=== slide5.xml ===
+Visualizing Two Decades of Drought Evolution.
+Cumulative "Drought Days" per season per district.
+The Threshold: SSI ≤ -1.0 (WMO, 2012; McKee, 
+Doesken
+ and Kleist, 1993).
+Risk Window: Ignores the first 25% of the season. This ensures we only count drought during the critical flowering and grain-fill stages where maize is most vulnerable.
+5
+Private & Confidential
+25-Year: Historic Stress
+
+=== slide6.xml ===
+Computes a Pearson correlation matrix of annual drought days between all district pairs across Africa.
+Reveals how large-scale climate drivers sync. drought risk across distant regions.
+Diversification opportunities insuring uncorrelated regions lowers the total capital reserves required by the insurer (
+Carrão
+ et al., 2016).
+6
+Private & Confidential
+Correlations
+
+=== slide7.xml ===
+7
+Private & Confidential
+Spatially-Constrained Drought Risk Zones
+X
+combined
+​=[Weather⋅0.9∥Coordinates⋅0.1]
+Spatial Contiguity:
+ Uses a 
+k-NN graph (k=10)
+ to enforce the 
+REDCAP
+ constraint - ensuring districts only cluster with physical neighbours.
+Regionalization:
+ Implements the 
+Max-P Regions
+ logic (Duque et al., 2012) to transform raw pixel data into manageable insurance territories.
+Optimization:
+ Agglomerative clustering with 
+Ward linkage
+ minimizes internal variance within each drought belt.
+Automated Selection:
+ Optimal cluster count (
+𝐾
+=3
+) verified via 
+Silhouette Coefficient
+ maximization.
+
+=== slide8.xml ===
+8
+Private & Confidential
+Spatially-Constrained
+ Drought Risk Zones (
+𝝀
+=
+𝟎
+.
+𝟏
+,
+𝑲
+=
+𝟑
+)
+The algorithm naturally identified three distinct geographic zones:
+Northern/Sahel Belt (Dark Blue - G1):
+Shared risk across the northern agricultural chain (Senegal to Ethiopia) (Nicholson, 2013).
+Southern Africa (Brown - G2):
+A distinct climate zone driven primarily by the 
+ENSO (El Niño)
+ signal (Ropelewski & Halpert, 1987).
+East Africa & Madagascar (Light Blue - G3):
+Demonstrates that Madagascar’s climate risk correlates strongly with the East African coast (Marchant et al., 2007).
+(Duque et al., 2012; Guo, 2008)
+
+=== slide9.xml ===
+9
+Private & Confidential
+Custer Drought Trajectories vs ENSO (
+𝝀
+=
+𝟎
+.
+𝟏
+,
+𝑲
+=
+𝟑
+)
+G2 (Southern Africa)
+ follows the 
+ENSO signal
+, showing strong spikes during 
+2015 - 2016
+ and 
+2023 - 2024
+.
+G1 (Red)
+ and 
+G3 (Blue)
+ do not follow the black dotted line.
+G1 (Northern/Sahel) 
+remains consistently lower, indicating reduced drought frequency relative to other the clusters.
++0.595 
++0.005 
+-0.033 
+
+=== slide10.xml ===
+10
+Private & Confidential
+Continental Diversification: Southern Africa
+Regional Drought Coherence:
+ Uses Pearson’s 
+𝑟
+ to map districts that fail simultaneously, identifying "Systemic Risk Zones."
+High-Correlation Proxy:
+Mkushi
+ (Zambia) shows extreme co-variability (
+𝑟
+>0.90
+) with 
+Serenje
+ and districts in Malawi, defining a single payout cluster.
+Historical Exposure Profile:
+ The 26-year sparkline quantifies the frequency and severity of historical drought "shocks."
+Precision Standard:
+ Built on Gamma-CDF standardized indices, ensuring that a 
+−
+1.0
+ SSI threshold represents the same drought severity across all districts.
+
+=== slide11.xml ===
+11
+Private & Confidential
+West Africa
+Strategic Independence:
+ Demonstrates that West African drought drivers (Sahelian Monsoon) are uncorrelated with Southern African drivers.
+Sahelian Risk Cohesion:
+Bougouni
+ (Mali) shows high correlation with Guinea and Burkina Faso, but zero correlation with the Zambian cluster.
+The 'Natural Hedge':
+ Proves that drought in the South does not imply drought in the North, allowing for capital reserve optimization.
+Maize-Specific Targeting:
+ Results are filtered through GEOGLAM Maize 1 crop calendars, focusing risk assessment only on the critical 75% of the growing season.
+
+=== slide12.xml ===
+AghaKouchak
+, A. (2014) ‘A baseline probabilistic drought forecasting framework using standardized soil moisture index’, Hydrology and Earth System Sciences, 18(7), pp. 2515–2526. 
+doi
+: 10.5194/hess-18-2515-2014.
+Carrão
+, H., Naumann, G. and Barbosa, P. (2016) ‘Mapping global patterns of drought risk: An empirical framework based on sub-national estimates of hazard, exposure and vulnerability’, Global Environmental Change, 39, pp. 108–124. 
+doi
+: 10.1016/j.gloenvcha.2016.04.012.
+Group on Earth Observations Global Agricultural Monitoring (GEOGLAM) (2024) Crop Monitor for Early Warning (CM4EW) Calendars V1.4. Available at: https://cropmonitor.org/ (Accessed: 29 April 2026).
+McKee, T. B., 
+Doesken
+, N. J. and Kleist, J. (1993) ‘The relationship of drought frequency and duration to time scales’, Proceedings of the 8th Conference on Applied Climatology, Anaheim, California, 17–22 January. Boston: American Meteorological Society, pp. 179–184.
+World Meteorological Organization (WMO) (2012) Standardized Precipitation Index User Guide. WMO-No. 1090. Geneva: World Meteorological Organization.
+12
+Private & Confidential
+References:
+
+=== slide13.xml ===
+Private & Confidential
+13

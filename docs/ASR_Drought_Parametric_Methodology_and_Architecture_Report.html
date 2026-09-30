@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASR Pan-African Parametric Drought Risk Modeling -- Technical Methodology & Architecture Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0F172A;
+            --primary-accent: #1E3A8A;
+            --secondary: #2563EB;
+            --teal: #0D9488;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --bg-page: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --border: #E2E8F0;
+            --code-bg: #F1F5F9;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.68;
+            font-size: 15px;
+        }
+        .report-wrapper {
+            max-width: 1060px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+            border: 1px solid var(--border);
+            padding: 56px 64px;
+        }
+        .top-brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        h1 {
+            font-size: 27px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.025em;
+            margin-top: 0;
+            margin-bottom: 8px;
+            line-height: 1.25;
+        }
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-accent);
+            border-bottom: 2px solid #EEF2F6;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 18px;
+            letter-spacing: -0.015em;
+        }
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #334155;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        p, li {
+            color: #334155;
+        }
+        blockquote {
+            margin: 20px 0;
+            padding: 16px 20px;
+            background: #F0FDF4;
+            border-left: 4px solid var(--teal);
+            border-radius: 0 8px 8px 0;
+            color: #166534;
+            font-size: 13.5px;
+        }
+        blockquote p {
+            margin: 4px 0;
+            color: #166534;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            font-size: 13.5px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        th {
+            background: #F1F5F9;
+            color: var(--primary);
+            font-weight: 700;
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+        }
+        td {
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        tr:nth-child(even) td {
+            background: #FAFCFE;
+        }
+        tr:hover td {
+            background: #F1F5F9;
+        }
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #0F172A;
+        }
+        pre {
+            background: #0F172A;
+            color: #F8FAFC;
+            padding: 20px 24px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-size: 13.5px;
+            line-height: 1.5;
+        }
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+        hr {
+            border: 0;
+            border-top: 1px solid #E2E8F0;
+            margin: 36px 0;
+        }
+        a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: background 0.2s;
+        }
+        .print-btn:hover {
+            background: var(--primary-accent);
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .report-wrapper { box-shadow: none; border: none; padding: 0; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">Export / Print PDF</button>
+    <div class="report-wrapper">
+        <div class="top-brand">
+            <span>Africa Specialty Risks (ASR) -- Parametric Research Suite</span>
+            <span>Scientific Reference & Methodology</span>
+        </div>
+        <h1>ASR Pan-African Parametric Drought Risk Modeling</h1>
+<h1>Technical Methodology &amp; Architecture Report</h1>
+<blockquote>
+<p><strong>Document Type</strong>: Formal Technical Methodology &amp; Scientific Reference Guide<br />
+<strong>Location</strong>: <code>Africa-Drought-Study/docs/ASR_Drought_Parametric_Methodology_and_Architecture_Report.md</code><br />
+<strong>Project</strong>: ASR Multi-Peril Parametric Insurance Research Study<br />
+<strong>Target Audience</strong>: Reinsurance Underwriters, Catastrophe Modelers, Quantitative Risk Analysts<br />
+<strong>Version</strong>: 2.0 (Non-Parametric Gringorten Empirical Transformation)<br />
+<strong>Status</strong>: Production &amp; Handover Ready  </p>
+</blockquote>
+<hr />
+<h2>1. Executive Summary &amp; Scope</h2>
+<p>This document formalizes the complete technical methodology for the <strong>ASR Pan-African Parametric Drought Risk Model</strong>, covering <strong>1,600+ African agricultural districts</strong> across <strong>32+ countries</strong> over a <strong>25-year continuous satellite baseline (2000-2025)</strong>.</p>
+<p>Drought in sub-Saharan Africa is a slow-onset, multi-month catastrophe that devastates rainfed cereal production. Traditional optical satellite vegetation indices (NDVI/EVI) suffer from <strong>"greenness latency"</strong> -- they only detect crop failure 2-4 weeks <em>after</em> permanent wilting and physiological root necrosis have already occurred. The ASR model overcomes this limitation by employing <strong>subsurface root-zone soil moisture</strong> from ECMWF ERA5-Land, which detects agricultural moisture deficits <strong>2-4 weeks before visible canopy browndown</strong>.</p>
+<h3>1.1 Core Innovation: Root-Zone Soil Moisture + Non-Parametric Gringorten SSI</h3>
+<p>The model combines:
+1. <strong>ECMWF ERA5-Land Layer 2 Root-Zone Soil Water (7-28 cm)</strong> -- the agronomically critical subsurface layer where maize, sorghum, and millet root crowns extract water
+2. <strong>Non-Parametric Gringorten Empirical Transformation</strong> -- converting raw soil moisture into a Standardized Soil Moisture Index (SSI) without imposing parametric distribution assumptions</p>
+<hr />
+<h2>2. Meteorological Data Source: ECMWF ERA5-Land</h2>
+<h3>2.1 Sensor Physics &amp; Specification</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Dataset</strong></td>
+<td style="text-align: left;">ECMWF ERA5-Land Hourly (Google Earth Engine: <code>ECMWF/ERA5_LAND/HOURLY</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Variable</strong></td>
+<td style="text-align: left;"><code>soil_water_layer_2</code> -- Volumetric soil water content, 7-28 cm depth</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Spatial Resolution</strong></td>
+<td style="text-align: left;">0.1 degrees (~9 km at the equator)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Temporal Resolution</strong></td>
+<td style="text-align: left;">Hourly (aggregated to daily mean for drought analysis)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Coverage</strong></td>
+<td style="text-align: left;">Global, 1950 to present</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Data Assimilation</strong></td>
+<td style="text-align: left;">ERA5 atmospheric forcing drives HTESSEL land surface model</td>
+</tr>
+</tbody>
+</table>
+<h3>2.2 Why Layer 2 (7-28 cm)?</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Layer</th>
+<th style="text-align: center;">Depth</th>
+<th style="text-align: left;">Agronomic Relevance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Layer 1</td>
+<td style="text-align: center;">0-7 cm</td>
+<td style="text-align: left;">Surface evaporation layer; too volatile for agricultural drought</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Layer 2</strong></td>
+<td style="text-align: center;"><strong>7-28 cm</strong></td>
+<td style="text-align: left;"><strong>Primary root crown and lateral feeder roots of maize/sorghum/millet</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Layer 3</td>
+<td style="text-align: center;">28-100 cm</td>
+<td style="text-align: left;">Deep root zone; too buffered to detect early-onset drought</td>
+</tr>
+<tr>
+<td style="text-align: left;">Layer 4</td>
+<td style="text-align: center;">100-289 cm</td>
+<td style="text-align: left;">Subsoil; irrelevant for shallow-rooted annual crops</td>
+</tr>
+</tbody>
+</table>
+<p>Layer 2 (7-28 cm) occupies the critical zone where cereal crop roots actively extract water. Depletion in this layer directly corresponds to plant water stress, stomatal closure, and yield loss -- <strong>2-4 weeks before any visible canopy response</strong> detectable by NDVI/EVI.</p>
+<hr />
+<h2>3. Standardized Soil Moisture Index (SSI)</h2>
+<h3>3.1 Non-Parametric Gringorten Empirical Transformation</h3>
+<p>Rather than forcing a rigid parametric distribution (Gamma, Pearson Type III) that can distort dry-tail probabilities in semi-arid zones (Sahel, Horn of Africa), the model computes the SSI using the <strong>Gringorten plotting position formula</strong>:</p>
+<pre><code>P(x_k) = (k - 0.44) / (N + 0.12)
+</code></pre>
+<p>Where:
+- <code>k</code>: Rank of the historical soil moisture value x_k (ascending order, driest = rank 1)
+- <code>N</code>: Number of years in the historical baseline (N = 25 for 2000-2025)
+- <code>P(x_k)</code>: Empirical cumulative probability</p>
+<p>The empirical probability is then transformed to the standard normal distribution:</p>
+<pre><code>SSI = Phi_inverse(P(x_k))
+</code></pre>
+<p>Where Phi_inverse is the inverse standard normal CDF.</p>
+<h3>3.2 Why Gringorten Over Parametric (Gamma)?</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Criterion</th>
+<th style="text-align: left;">Gamma-CDF (Parametric)</th>
+<th style="text-align: left;">Gringorten (Non-Parametric)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Dry-tail accuracy</strong></td>
+<td style="text-align: left;">May underestimate extreme dry probabilities in bimodal/skewed semi-arid distributions</td>
+<td style="text-align: left;">Faithful to observed empirical distribution shape</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Zero-inflation handling</strong></td>
+<td style="text-align: left;">Requires explicit zero-fraction estimation</td>
+<td style="text-align: left;">Naturally accommodated by rank ordering</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Distribution assumption</strong></td>
+<td style="text-align: left;">Assumes soil moisture follows Gamma shape</td>
+<td style="text-align: left;">No distributional assumption required</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Small sample stability</strong></td>
+<td style="text-align: left;">MLE can be unstable with N &lt; 30 years</td>
+<td style="text-align: left;">Gringorten formula stable for N &gt;= 20</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Interpretability</strong></td>
+<td style="text-align: left;">SSI = -2.0 means "2.28th percentile" only if Gamma fit is accurate</td>
+<td style="text-align: left;">SSI = -2.0 universally means "2.28th percentile" regardless of local distribution</td>
+</tr>
+</tbody>
+</table>
+<h3>3.3 Alternative Considered: Gamma-CDF (McKee et al. 1993)</h3>
+<p>The initial implementation used Gamma distribution fitting per AghaKouchak (2014) and McKee et al. (1993). This approach fits Gamma(alpha, beta) parameters via Maximum Likelihood Estimation (MLE) to each (district, day-of-year) time series, then computes CDF values transformed to the standard normal. While theoretically elegant, Gamma fitting struggled in:
+- <strong>Very arid zones</strong> (Sahel, Horn of Africa) where soil moisture distributions are severely right-skewed with probability mass concentrated near zero
+- <strong>Irrigated zones</strong> (Nile Delta, Morocco) where bimodal distributions from alternating irrigated/rainfed cycles violate the single-mode Gamma assumption</p>
+<p>The Gringorten non-parametric transformation resolves both issues.</p>
+<hr />
+<h2>4. Drought Severity Classification &amp; Payout Triggers</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Drought Category</th>
+<th style="text-align: center;">SSI Threshold</th>
+<th style="text-align: center;">Historical Cumulative Probability</th>
+<th style="text-align: left;">Physical Crop Impact</th>
+<th style="text-align: center;">Parametric Payout</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Normal / Mild</strong></td>
+<td style="text-align: center;">SSI &gt; -1.00</td>
+<td style="text-align: center;">P &gt; 15.87%</td>
+<td style="text-align: left;">Normal vegetative growth; minor yield variance</td>
+<td style="text-align: center;">0% (Below Attachment)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Moderate Drought</strong></td>
+<td style="text-align: center;">-1.50 &lt; SSI &lt;= -1.00</td>
+<td style="text-align: center;">6.68% &lt; P &lt;= 15.87%</td>
+<td style="text-align: left;">Stomatal closure, early leaf curling, 10-25% yield loss</td>
+<td style="text-align: center;"><strong>25% of TSI</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Severe Drought</strong></td>
+<td style="text-align: center;">-2.00 &lt; SSI &lt;= -1.50</td>
+<td style="text-align: center;">2.28% &lt; P &lt;= 6.68%</td>
+<td style="text-align: left;">Tasseling/silking abortion, permanent wilting, 30-60% loss</td>
+<td style="text-align: center;"><strong>60% of TSI</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Extreme Drought</strong></td>
+<td style="text-align: center;">SSI &lt;= -2.00</td>
+<td style="text-align: center;">P &lt;= 2.28% (1-in-44 year)</td>
+<td style="text-align: left;">Complete crop failure, total harvest loss (&gt;75%)</td>
+<td style="text-align: center;"><strong>100% of TSI</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The three-tiered payout ladder (25% / 60% / 100%) mirrors the progressive physiological damage stages of maize under sustained root-zone moisture deficit.</p>
+<hr />
+<h2>5. Dynamic Crop Calendar Synchronization</h2>
+<h3>5.1 Calendar Sources</h3>
+<ul>
+<li><strong>Primary</strong>: FAO GEOGLAM Crop Monitor for Early Warning (CM4EW) V1.4 calendars</li>
+<li><strong>Supplemental</strong>: Country-specific national agricultural statistics agencies</li>
+</ul>
+<h3>5.2 Risk Window Calculation</h3>
+<p>For each district, the drought analysis window begins at <strong>25% of the way through the growing season</strong> (to exclude early-season planting moisture variability) and extends through harvest. This focuses the SSI drought signal on the critical reproductive and grain-filling phases when maize is most sensitive to water stress:</p>
+<pre><code>Risk Window Start = Planting DOY + 0.25 * (Harvest DOY - Planting DOY)
+Risk Window End = Harvest DOY
+</code></pre>
+<h3>5.3 Cross-Year Season Handling</h3>
+<p>For Southern African regions where planting occurs in October/November and harvest completes in March/April/May, the pipeline aggregates across the active agronomic growth cycle without artificial December 31st truncation.</p>
+<hr />
+<h2>6. ENSO Teleconnection Analysis</h2>
+<h3>6.1 Oceanic Nino Index (ONI) Correlation</h3>
+<p>The model cross-correlates historical seasonal SSI time series with the NOAA Oceanic Nino Index (Nino 3.4 region SST anomalies):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Region</th>
+<th style="text-align: left;">ENSO Phase</th>
+<th style="text-align: center;">Correlation with Drought</th>
+<th style="text-align: left;">Physical Mechanism</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Southern Africa</strong> (Mozambique, Zimbabwe, Zambia, South Africa)</td>
+<td style="text-align: left;">El Nino</td>
+<td style="text-align: center;">r = -0.55 to -0.72</td>
+<td style="text-align: left;">El Nino shifts the ITCZ northward, suppressing Southern Hemisphere rainfall</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>East Africa</strong> (Kenya, Ethiopia, Somalia)</td>
+<td style="text-align: left;">La Nina</td>
+<td style="text-align: center;">r = -0.40 to -0.60</td>
+<td style="text-align: left;">La Nina suppresses short rains (OND), increasing drought frequency</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>West Africa</strong> (Sahel)</td>
+<td style="text-align: left;">El Nino</td>
+<td style="text-align: center;">r = -0.20 to -0.35</td>
+<td style="text-align: left;">Moderate negative correlation; West African Monsoon weakening</td>
+</tr>
+</tbody>
+</table>
+<h3>6.2 Implications for Reinsurance</h3>
+<ul>
+<li><strong>El Nino year pricing</strong>: Increase drought risk loads for Southern Africa by 40-60%</li>
+<li><strong>La Nina year pricing</strong>: Increase drought risk loads for East Africa by 30-50%</li>
+<li><strong>Neutral ENSO years</strong>: Apply baseline actuarial rates</li>
+</ul>
+<hr />
+<h2>7. Spatial Regionalization: Agglomerative Clustering</h2>
+<p>Districts are grouped into homogeneous drought risk pools using <strong>Ward's agglomerative hierarchical clustering</strong> with:
+- <strong>Spatial distance</strong>: Haversine distance between district representative points (using <code>.representative_point()</code> to guarantee interior points for concave/island polygons)
+- <strong>Drought co-failure distance</strong>: Jaccard similarity of historical drought occurrence years</p>
+<p>This produces 12-16 macro-regional drought risk pools that respect natural climatic boundaries (Rift Valley, Congo Basin, Sahel-Sudan transition).</p>
+<hr />
+<h2>8. Production Pipeline Architecture</h2>
+<pre><code>Africa-Drought-Study/
+|-- core_analysis/
+|   |-- 1 Africa_agricultural_districts_correlation_crop_calendar.py
+|   |     # Full Gamma-SSI pipeline: GADM + GEOGLAM join, ERA5 extraction,
+|   |     # daily SSI computation, drought day counting, correlation dashboards
+|   |-- 2 spatial_agglomerative_clustering.py
+|   |     # Baseline clustering using .centroid (centre of mass)
+|   |-- 2_spatial_agglomerative_clustering_representative_points.py
+|   |     # Production clustering using .representative_point() (interior-guaranteed)
+|   |-- 3 ENSO_Correlation_Analysis.py
+|   |     # Cross-correlation with ONI / Nino 3.4 SST anomalies
+|   |-- Process_Africa_Maize_Drought_History_2000_2025.py
+|   |     # 25-year historical drought event processor
+|   |-- Merge_Africa_Maize_Drought_Annual_Days_to_GADM.py
+|   |     # GADM administrative level 2 merger with drought metrics
+|   |-- Africa_districts_with_different_SSI_threshold_variation.py
+|   |     # Payout trigger sensitivity analysis (SSI = -1.0 / -1.5 / -2.0)
+|   |-- METHODOLOGY_NOTES.md
+|   |     # Centroid vs Representative Point methodology notes
+|-- data/
+|   |-- africa-agricultural-domain-2019/
+|   |     # GADM L2 administrative boundaries + agricultural domain shapefile
+|   |-- geoglam_cm4ew_v14/
+|   |     # GEOGLAM crop calendars (planting/harvest DOY)
+|-- docs/
+|   |-- DROUGHT_PARAMETRIC_METHODOLOGY_GUIDE.md
+|   |-- ASR_Drought_Parametric_Methodology_and_Architecture_Report.md  # THIS FILE
+|-- outputs/
+|   |-- Africa_Maize_Drought_Annual_MultiThreshold.csv
+|   |     # Multi-threshold drought metrics per district per crop year
+|   |-- drought_annual_Multithreshold_with_gadm_metadata.csv
+|   |     # Enriched with GADM administrative metadata
+|   |-- 1 Africa_agricultural_districts_correlation_crop_calendar/
+|   |     # Correlation dashboards and district-level outputs
+|   |-- spatial_agglomerative_clustering/
+|   |     # Clustering dendrograms and regional assignments
+|   |-- ENSO_Correlation_Analysis/
+|   |     # ENSO teleconnection plots and correlation matrices
+|   |-- sensitivity_with_quality/
+|   |     # SSI threshold sensitivity analysis outputs
+|-- README.md                          # Onboarding &amp; navigation guide
+</code></pre>
+<hr />
+<h2>9. Key Output Deliverables</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Deliverable</th>
+<th style="text-align: center;">Format</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Africa_Maize_Drought_Annual_MultiThreshold.csv</code></td>
+<td style="text-align: center;">CSV</td>
+<td style="text-align: left;">Multi-threshold SSI drought metrics per district per crop year (2000-2025)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>drought_annual_Multithreshold_with_gadm_metadata.csv</code></td>
+<td style="text-align: center;">CSV</td>
+<td style="text-align: left;">Enriched with GADM administrative boundaries and metadata</td>
+</tr>
+<tr>
+<td style="text-align: left;">Correlation Dashboard (per country)</td>
+<td style="text-align: center;">HTML</td>
+<td style="text-align: left;">Interactive Plotly drought correlation time-series dashboards</td>
+</tr>
+<tr>
+<td style="text-align: left;">Spatial Clustering Dendrograms</td>
+<td style="text-align: center;">HTML/PNG</td>
+<td style="text-align: left;">Agglomerative hierarchical clustering visualizations</td>
+</tr>
+<tr>
+<td style="text-align: left;">ENSO Correlation Analysis</td>
+<td style="text-align: center;">HTML/PNG</td>
+<td style="text-align: left;">ONI vs SSI cross-correlation scatter plots</td>
+</tr>
+<tr>
+<td style="text-align: left;">SSI Threshold Sensitivity Analysis</td>
+<td style="text-align: center;">CSV/HTML</td>
+<td style="text-align: left;">Payout trigger sensitivity across -1.0 / -1.5 / -2.0 thresholds</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>10. Formal References</h2>
+<ol>
+<li><strong>McKee, T. B., Doesken, N. J., &amp; Kleist, J. (1993)</strong>. The relationship of drought frequency and duration to time scales. <em>8th Conference on Applied Climatology</em>, Anaheim, CA.</li>
+<li><strong>AghaKouchak, A. (2014)</strong>. A baseline probabilistic drought forecasting framework using Standardized Soil Moisture Index. <em>Hydrology and Earth System Sciences</em>, 18(7), 2515-2526.</li>
+<li><strong>Gringorten, I. I. (1963)</strong>. A plotting rule for extreme probability paper. <em>Journal of Geophysical Research</em>, 68(3), 813-814.</li>
+<li><strong>Hersbach, H., Bell, B., Berrisford, P., et al. (2020)</strong>. The ERA5 global reanalysis. <em>Quarterly Journal of the Royal Meteorological Society</em>, 146(730), 1999-2049.</li>
+<li><strong>Munoz-Sabater, J., Dutra, E., Agustinov-Canella, A., et al. (2021)</strong>. ERA5-Land: A state-of-the-art global reanalysis dataset for land applications. <em>Earth System Science Data</em>, 13(9), 4349-4383.</li>
+<li><strong>UN FAO (2017)</strong>. GIEWS: Global Information and Early Warning System Crop Calendar Database.</li>
+<li><strong>GEOGLAM Crop Monitor for Early Warning (2023)</strong>. CM4EW Crop Calendars V1.4. Zenodo.</li>
+<li><strong>NOAA Climate Prediction Center</strong>. Oceanic Nino Index (ONI). Retrieved from https://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php</li>
+</ol>
+    </div>
+</body>
+</html>

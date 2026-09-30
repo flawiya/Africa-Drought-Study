@@ -1,0 +1,73 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Temporary / scratch
+*.tmp
+*.log
+
+# ================================================================
+# Large data files exceeding GitHub 100MB limit
+# Raw multi-GB spatial boundaries & raw climate reanalysis dumps
+# ================================================================
+
+# GADM and GAUL raw boundary shapefiles/geopackages
+data/*.gpkg
+data/*/*.gpkg
+data/gadm_410-levels/
+data/GAUL_2024_L2/
+data/GAUL_2024_L2.*
+data/GEOGLAM_CM4EW_Calendars_V1.4/
+data/GEOGLAM_CM4EW_Calendars_V1.4.*
+data/_AFRICA_ADMx.*
+data/africa_admx.*
+data/final.zip
+data/*.zip
+
+# Large raw climate time series (>100MB)
+data/Africa_Agri_districts_ERA5_LAND_DAILY_AGGR_2000_2026_timeseries.csv
+data/MERGED_soil_moisture_layer2.csv
+data/Zambia_70_Agri_Districts_Master.csv
+data/Zambia_Seasonal_Drought_Analysis.csv
+
+# Large standalone interactive HTML dashboards (>100MB)
+outputs/1 Africa_agricultural_districts_correlation_crop_calendar/Africa_Maize_GammaSSI_Drought_Map.html
+outputs/ENSO_Correlation_Analysis/enso_cluster_map.html
+outputs/ENSO_Correlation_Analysis/enso_cluster_map_k3.html
