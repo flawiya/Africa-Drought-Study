@@ -3,12 +3,14 @@ import pandas as pd
 import os
 
 # ==========================================
-# 1. DEFINE PATHS (Check these carefully!)
-# ==========================================
-# I have added the 'ethiopia\output' subfolder which was used in your previous scripts
-shp_path = r"C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\data\africa_agricultural_domain_2019.shp"
-csv_input = r"C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\data\ethiopia_rainfall_master_cleaned.csv"
-csv_output = r"C:\Users\FlawiyaShirishMore\Downloads\Africa-Drought-Study\data\ethiopia_rainfall_master_cleaned_with_latlon.csv"
+# 1. DEFINE PATHS (Dynamic relative paths)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(SCRIPT_DIR)
+DATA_DIR = os.path.join(BASE_DIR, "data")
+
+shp_path = os.path.join(DATA_DIR, "africa_agricultural_domain_2019.shp")
+csv_input = os.path.join(DATA_DIR, "ethiopia_rainfall_master_cleaned.csv")
+csv_output = os.path.join(DATA_DIR, "ethiopia_rainfall_master_cleaned_with_latlon.csv")
 
 # ==========================================
 # 2. PATH VERIFICATION (Debug Step)
